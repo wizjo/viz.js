@@ -39,7 +39,7 @@ var PieChart = Chart.extend({
         .enter()
           .append("svg:g")
             .attr("class","slice")
-            //.attr("fill-opacity", function(d, i) { return (1 - i*.25)>0? (1 - i*.25) : .1; })
+            .attr("fill-opacity", function(d, i) { return (1 - i*.25)>0? (1 - i*.25) : .1; })
           .append("svg:path")
             .attr("fill",function(d, i) { return self.fill(i);})
             .attr("d",d3.svg.arc().outerRadius(this.outerRad));
