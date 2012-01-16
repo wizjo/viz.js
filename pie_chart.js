@@ -32,7 +32,7 @@ var PieChart = Chart.extend({
         .attr("height", this.height)
         .style("background-color", this.background_color)
       .append("svg:g")
-        .attr("transform", "translate(" + this.outerRad + ", " + this.outerRad + ")")
+        .attr("transform", "translate(" + this.width/2 + ", " + this.height/2 + ")")
     .selectAll("g.slice")
         .data(d3.layout.pie().value(function(d) {return d.value;})) // d is an element of the data array, 
                                                                     // so change this to call d.whatever
