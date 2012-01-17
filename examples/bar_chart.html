@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title id="viz-title">Bar Chart</title>
+    <link type="text/css" rel="stylesheet" href="example.css"/>
+    
+    <!-- jquery -->
+    <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    
+    <!-- include your local d3 library instead -->
+    <script type="text/javascript" src="../lib/d3/d3.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.chart.js"></script>
+    
+    <!-- visualizie base classes -->
+    <script type="text/javascript" src="../class.js"></script>
+    <script type="text/javascript" src="../chart.js"></script>
+    <script type="text/javascript" src="../bar_chart.js"></script>
+  </head>
+  <body>
+    <div class="chart" id="chart-div" style="width:500px; height:500px;"></div>
+    <script type="text/javascript">
+      var data = {
+        labels: [ "Web", "Desktop", "Mobile", "SharePoint", "Other" ], 
+        values: { "Deloitte": [ {x:0, y:40}, {x:1, y:36.9}, {x:2, y:5}, {x:3, y:3}, {x:4, y:4} ], 
+          "Nationwide": [ {x:0, y:2.4}, {x:1, y:6}, {x:2, y:9.8}, {x:3, y:10.9}, {x:4, y:40} ]        }
+      };
+      var chart = new BarChart("#chart-div", data, {
+           width: 450
+         , space: 20 // spacing between bars
+         , leftMargin: 5
+         , rightMargin: 5
+         , topMargin: 5
+         , bottomMargin: 5
+         , stacked: false // false: grouped bars; true: stacked bars (when there's one than one series)
+         , numRules: 10
+         , barWidth: 20
+         , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
+       });
+    </script>
+  </body>
+</html>
