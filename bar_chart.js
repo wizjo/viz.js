@@ -45,15 +45,21 @@ var BarChart = Chart.extend({
         function(values){ return self.stacked? (values.y0 + values.y) : values.y; 
       })) 
     }));
-        
+    
     // Bars extend horizontally in BarChart, vertically in ColumnChart
-    this.vScale = this.vScale || d3.scale.linear()
+    if(self.baseline === 'left') {
+      this.hScale = this.hScale || d3.scale.linear()
         .domain([(self.min < 0 ? self.min : 0), self.max])
-        .range([0, this.width - this.leftMargin - this.rightMargin]);
-        
+        .range([0, self.width - self.leftMargin - self.rightMargin]);
+    } else {
+      this.hScale = this.hScale || d3.scale.linear()
+        .domain([(self.min < 0 ? self.min : 0), self.max])
+        .range([self.width - self.leftMargin - self.rightMargin, 0]);
+    }
+    
     this.vis = d3.select(selector)
         .append("svg:svg")
-        .attr("width", this.width)
+        .attr("width", this.width - this.rightMargin)
         .attr("height", this.height);
     
     this.g = this.vis.append("svg:g")
@@ -61,11 +67,15 @@ var BarChart = Chart.extend({
     
     if(this.addRules || this.numRules && this.numRules > 0) {
       this.g.selectAll("line.rule")
-          .data(this.vScale.ticks(this.numRules))
+          .data(function() {
+            // Get rid of the last item in the array since ticks return (numRules + 1)
+            rules = self.hScale.ticks(self.numRules);
+            return $.map(rules, function(value, idx){ if(idx<rules.length-1) { return [value] } });
+          })
         .enter().append("line")
           .attr("class", "rule")
-          .attr("x1", this.vScale)
-          .attr("x2", this.vScale)
+          .attr("x1", this.hScale)
+          .attr("x2", this.hScale)
           .attr("y1", 0)
           .attr("y2", this.height)
           .style("stroke", function(d, i){ return i>0? "#ccc" : "#333"; })
@@ -83,12 +93,18 @@ var BarChart = Chart.extend({
         .data(values)
       .enter().append("svg:rect")
         .attr("class", function() { return "series_" + key; })
-        .attr("x", function(d) { return self.vScale( self.stacked? d.y0 : 0); })
+        .attr("x", function(d) { 
+          if(self.baseline === 'left') { return self.hScale( self.stacked? d.y0 : 0); }
+          else { return self.hScale( self.stacked? (d.y+d.y0) : d.y); }
+        })
         .attr("y", function(d, i) { 
           return (self.stacked? 0 : parseInt(key) * self.barWidth) + i * ((self.stacked ? 1 : self.series.length)*self.barWidth + self.space); 
         })
         .attr("height", self.barWidth)
-        .attr("width", function(d) { return self.vScale(d.y); })
+        .attr("width", function(d) { 
+          if(self.baseline === 'left') { return self.hScale(d.y); }
+          else { return self.hScale(0) - self.hScale(d.y); }
+        })
         .attr("stroke", "none")
         .attr("fill", function(d, i) { return self.fill("bar_" + key + "_" + i) });
   }

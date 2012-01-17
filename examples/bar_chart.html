@@ -24,20 +24,22 @@
     <script type="text/javascript">
       var data = {
         labels: [ "Web", "Desktop", "Mobile", "SharePoint", "Other" ], 
-        values: { "Deloitte": [ {x:0, y:40}, {x:1, y:36.9}, {x:2, y:5}, {x:3, y:3}, {x:4, y:4} ], 
-          "Nationwide": [ {x:0, y:2.4}, {x:1, y:6}, {x:2, y:9.8}, {x:3, y:10.9}, {x:4, y:40} ]        }
+        values: { "Deloitte": [ {x:0, y:10}, {x:1, y:30}, {x:2, y:50}, {x:3, y:20}, {x:4, y:10} ], 
+          "Nationwide": [ {x:0, y:20}, {x:1, y:10}, {x:2, y:10}, {x:3, y:40}, {x:4, y:50} ] 
+        }
       };
       var chart = new BarChart("#chart-div", data, {
-           width: 450
-         , space: 20 // spacing between bars
-         , leftMargin: 5
-         , rightMargin: 5
-         , topMargin: 5
-         , bottomMargin: 5
-         , stacked: false // false: grouped bars; true: stacked bars (when there's one than one series)
-         , numRules: 10
-         , barWidth: 20
-         , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
+          width: 450
+        , space: 20 // spacing between bars
+        , leftMargin: 5
+        , rightMargin: 5
+        , topMargin: 5
+        , bottomMargin: 5
+        , baseline: "right"
+        , stacked: true // false: grouped bars; true: stacked bars (when there's one than one series)
+        , numRules: 1
+        , barWidth: 20
+        , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
        });
     </script>
   </body>
