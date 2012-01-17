@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title id="viz-title">Column Chart</title>
+    <link type="text/css" rel="stylesheet" href="example.css"/>
+    
+    <!-- jquery -->
+    <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    
+    <!-- include your local d3 library instead -->
+    <script type="text/javascript" src="../lib/d3/d3.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.chart.js"></script>
+    
+    <!-- visualizie base classes -->
+    <script type="text/javascript" src="../class.js"></script>
+    <script type="text/javascript" src="../chart.js"></script>
+    <script type="text/javascript" src="../column_chart.js"></script>
+  </head>
+  <body>
+    <div class="chart" id="chart-div" style="width:500px; height:500px;"></div>
+    <script type="text/javascript">
+      var data = {
+        labels: [ "Web", "Desktop", "Mobile", "SharePoint", "Other" ], 
+        values: { "Deloitte": [ {x:0, y:10}, {x:1, y:30}, {x:2, y:50}, {x:3, y:20}, {x:4, y:10} ], 
+          "Nationwide": [ {x:0, y:20}, {x:1, y:10}, {x:2, y:10}, {x:3, y:40}, {x:4, y:50} ] 
+        }
+      };
+      var chart = new ColumnChart("#chart-div", data, {
+          height: 450
+        , space: 40 // spacing between bars
+        , leftMargin: 5
+        , rightMargin: 5
+        , topMargin: 5
+        , bottomMargin: 5
+        , baseline: "bottom"
+        , stacked: true // false: grouped bars; true: stacked bars (when there's one than one series)
+        , numRules: 1
+        , barWidth: 20
+        , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
+       });
+    </script>
+  </body>
+</html>
