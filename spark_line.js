@@ -66,6 +66,16 @@ var SparkLine = Chart.extend({
         ); 
       });
 
+    // Use this for adding areas
+    this.area = this.area || d3.svg.area()
+        .x(function(d) { return self.x((self.xLineTransform && self.xLineTransform(d.x)) || d.x); })
+        .y0(function(d) { return -1 * (self.stacked ? self.y(d.y0) : self.yMargin) })
+        .y1(function(d) { 
+          return -1 * self.y(
+            (self.yLineTransform && self.yLineTransform(this.stacked? (d.y + d.y0) : d.y)) || this.stacked? (d.y + d.y0) : d.y
+          ); 
+        });
+
     // Add the lines and trailing dot to highlight latest sample point
     $.each(data, function(key, values) {
       self.addLine(key, values);
