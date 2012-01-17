@@ -30,9 +30,10 @@ var SparkLine = Chart.extend({
       })) 
     }));
 
-    // Options for turning off dots and labels
+    // Options for dots, labels, and fill
     this.usedots = this.usedots || true;
     this.uselabels = this.uselabels || true;
+    this.fillShades = this.fillShades || false;
     
     // Set up scale functions
     this.x = this.x || d3.scale.linear().domain([this.startX, this.endX]).range([0 + this.xLeftMargin, this.width - this.xLeftMargin - this.xRightMargin]);
@@ -74,6 +75,7 @@ var SparkLine = Chart.extend({
       if (this.uselabels) {
         self.addLabel(key, values);
       }
+      if(self.fillShades) { self.addArea(key, values); }
     })
   }
 
@@ -104,6 +106,13 @@ var SparkLine = Chart.extend({
       .attr("text-anchor", "left")
       .text(values[values.length-1].y)
       .attr("fill", this.fill(key))
+  }
+
+  , addArea: function(key, values) {
+    this.g.append("svg:path")
+        .attr("class", "area " + key)
+        .attr("d", this.area(values))
+        .attr("fill", this.fill(key));
   }
   
 });
