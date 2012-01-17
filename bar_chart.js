@@ -59,7 +59,7 @@ var BarChart = Chart.extend({
     
     this.vis = d3.select(selector)
         .append("svg:svg")
-        .attr("width", this.width - this.rightMargin)
+        .attr("width", this.width)
         .attr("height", this.height);
     
     this.g = this.vis.append("svg:g")
