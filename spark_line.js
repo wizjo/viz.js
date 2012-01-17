@@ -28,14 +28,14 @@ var SparkLine = Chart.extend({
       return d3.min($.map(values, 
         function(values){ return self.stacked? (values.y0 + values.y) : values.y; 
       })) 
-    }));
+    }));    
 
     // Options for dots, labels, and fill
     this.usedots = this.usedots || true;
     this.uselabels = this.uselabels || true;
     this.fillShades = this.fillShades || false;
     
-    // Set up scale functions
+    // Set up scale functions, and margins are taken care of
     this.x = this.x || d3.scale.linear().domain([this.startX, this.endX]).range([0 + this.xLeftMargin, this.width - this.xLeftMargin - this.xRightMargin]);
     this.y = this.y || d3.scale.linear().domain([self.min, self.max]).range([0 + this.yMargin, this.height - this.yMargin]);
     
@@ -49,26 +49,26 @@ var SparkLine = Chart.extend({
     this.background_color = this.background_color || "#fff";
 
     this.vis = d3.select(selector)
-      .append("svg:svg")
-      .attr("width", this.width)
-      .attr("height", this.height)
-      .style("background-color", this.background_color);
+        .append("svg:svg")
+        .attr("width", this.width)
+        .attr("height", this.height)
+        .style("background-color", this.background_color);
     
     this.g = this.vis.append("svg:g")
-      .attr("transform", "translate(0, " + this.height + ")");  // TODO: Account for margin?
+        .attr("transform", "translate(0, " + this.height + ")");;
 
     // Use this for adding lines
     this.line = this.line || d3.svg.line()
-      .x(function(d) { return self.x(d.x); })
-      .y(function(d) { 
-        return -1 * self.y(
-          (self.yLineTransform && self.yLineTransform(this.stacked? (d.y + d.y0) : d.y)) || this.stacked? (d.y + d.y0) : d.y
-        ); 
-      });
+        .x(function(d) { return self.x(d.x); })
+        .y(function(d) { 
+          return -1 * self.y(
+            (self.yLineTransform && self.yLineTransform(this.stacked? (d.y + d.y0) : d.y)) || this.stacked? (d.y + d.y0) : d.y
+          ); 
+        });
 
     // Use this for adding areas
     this.area = this.area || d3.svg.area()
-        .x(function(d) { return self.x((self.xLineTransform && self.xLineTransform(d.x)) || d.x); })
+        .x(function(d) { return self.x(d.x); })
         .y0(function(d) { return -1 * (self.stacked ? self.y(d.y0) : self.yMargin) })
         .y1(function(d) { 
           return -1 * self.y(
