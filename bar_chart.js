@@ -25,7 +25,7 @@ var BarChart = Chart.extend({
     this.baseline = this.baseline || "right"; // available values: "left", "right"
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
     this.fill = this.fill || d3.scale.category10();
-    this.addRules = this.addRueles || true;
+    this.addRules = this.addRules || true;
     
     // Reformat data for charting (and labeling)
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
