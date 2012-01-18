@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title id="viz-title">Line Chart</title>
+    <link type="text/css" rel="stylesheet" href="example.css"/>
+    
+    <!-- jquery -->
+    <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    
+    <!-- include your local d3 library instead -->
+    <script type="text/javascript" src="../lib/d3/d3.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.chart.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.time.js"></script>
+    
+    <!-- visualizie base classes -->
+    <script type="text/javascript" src="../class.js"></script>
+    <script type="text/javascript" src="../chart.js"></script>
+    <script type="text/javascript" src="../line_chart.js"></script>
+  </head>
+  <body>
+    <div class="chart" id="chart-div" style="width:800px; height:500px;"></div>
+    <script type="text/javascript">
+      var data = {  "contributors":[{"x":0,"y":15},{"x":1,"y":11},{"x":2,"y":120},{"x":3,"y":18},{"x":4,"y":21},{"x":5,"y":66},{"x":6,"y":74},{"x":7,"y":115},{"x":8,"y":152},{"x":9,"y":160},{"x":10,"y":162},{"x":11,"y":92},{"x":12,"y":92},{"x":13,"y":139},{"x":14,"y":75},{"x":15,"y":53},{"x":16,"y":57},{"x":17,"y":54},{"x":18,"y":37},{"x":19,"y":26},{"x":20,"y":32},{"x":21,"y":28},{"x":22,"y":43},{"x":23,"y":40},{"x":24,"y":50},{"x":25,"y":95},{"x":26,"y":51},{"x":27,"y":45},{"x":28,"y":77},{"x":29,"y":95},{"x":30,"y":123},{"x":31,"y":168},{"x":32,"y":161},{"x":33,"y":124},{"x":34,"y":242},{"x":35,"y":449},{"x":36,"y":933},{"x":37,"y":1231},{"x":38,"y":6092},{"x":39,"y":3795},{"x":40,"y":2363}],
+ "lurkers":[{"x":0,"y":0},{"x":1,"y":0},{"x":2,"y":0},{"x":3,"y":0},{"x":4,"y":0},{"x":5,"y":0},{"x":6,"y":0},{"x":7,"y":0},{"x":8,"y":0},{"x":9,"y":0},{"x":10,"y":0},{"x":11,"y":0},{"x":12,"y":0},{"x":13,"y":0},{"x":14,"y":0},{"x":15,"y":0},{"x":16,"y":0},{"x":17,"y":0},{"x":18,"y":0},{"x":19,"y":0},{"x":20,"y":0},{"x":21,"y":0},{"x":22,"y":0},{"x":23,"y":0},{"x":24,"y":0},{"x":25,"y":0},{"x":26,"y":0},{"x":27,"y":202},{"x":28,"y":267},{"x":29,"y":270},{"x":30,"y":343},{"x":31,"y":645},{"x":32,"y":655},{"x":33,"y":479},{"x":34,"y":836},{"x":35,"y":1490},{"x":36,"y":3448},{"x":37,"y":4152},{"x":38,"y":18802},{"x":39,"y":13163},{"x":40,"y":10876}],
+ "likers":[{"x":0,"y":40},{"x":1,"y":50},{"x":2,"y":30},{"x":3,"y":120},{"x":4,"y":0},{"x":5,"y":0},{"x":6,"y":34},{"x":7,"y":0},{"x":8,"y":0},{"x":9,"y":0},{"x":10,"y":0},{"x":11,"y":0},{"x":12,"y":1},{"x":13,"y":4},{"x":14,"y":1},{"x":15,"y":4},{"x":16,"y":2},{"x":17,"y":3},{"x":18,"y":1},{"x":19,"y":4},{"x":20,"y":4},{"x":21,"y":3},{"x":22,"y":1},{"x":23,"y":2},{"x":24,"y":6},{"x":25,"y":10},{"x":26,"y":4},{"x":27,"y":5},{"x":28,"y":5},{"x":29,"y":1},{"x":30,"y":15},{"x":31,"y":19},{"x":32,"y":11},{"x":33,"y":1000},{"x":34,"y":31},{"x":35,"y":64},{"x":36,"y":87},{"x":37,"y":1160},{"x":38,"y":674},{"x":39,"y":501},{"x":40,"y":331}]
+      }
+      var time_ids = ["2008/09/01 00:00:00","2008/10/01 00:00:00","2008/11/01 00:00:00","2008/12/01 00:00:00","2009/01/01 00:00:00","2009/02/01 00:00:00","2009/03/01 00:00:00","2009/04/01 00:00:00","2009/05/01 00:00:00","2009/06/01 00:00:00","2009/07/01 00:00:00","2009/08/01 00:00:00","2009/09/01 00:00:00","2009/10/01 00:00:00","2009/11/01 00:00:00","2009/12/01 00:00:00","2010/01/01 00:00:00","2010/02/01 00:00:00","2010/03/01 00:00:00","2010/04/01 00:00:00","2010/05/01 00:00:00","2010/06/01 00:00:00","2010/07/01 00:00:00","2010/08/01 00:00:00","2010/09/01 00:00:00","2010/10/01 00:00:00","2010/11/01 00:00:00","2010/12/01 00:00:00","2011/01/01 00:00:00","2011/02/01 00:00:00","2011/03/01 00:00:00","2011/04/01 00:00:00","2011/05/01 00:00:00","2011/06/01 00:00:00","2011/07/01 00:00:00","2011/08/01 00:00:00","2011/09/01 00:00:00","2011/10/01 00:00:00","2011/11/01 00:00:00","2011/12/01 00:00:00","2012/01/01 00:00:00"]
+      var 
+        width = 800,
+        height = 500,
+        xLeftMargin = 100,
+        xRightMargin = 50, 
+        yMargin = 50,
+        startX = new Date("2008/09/01 00:00:00"),
+        endX = new Date("2012/01/01 00:00:00");
+
+      var chart = new LineChart("#chart-div", data, {
+          width: width
+        , height: height
+        , xLeftMargin: xLeftMargin
+        , xRightMargin: xRightMargin
+        , yMargin: yMargin
+        , startX: startX
+        , endX: endX
+        , xLineTransform: function(n) { return new Date(time_ids[n]); }
+        , stacked: true
+        , fillShades: true
+        , x: d3.time.scale().domain([startX, endX]).range([0 + xLeftMargin, width - xLeftMargin - xRightMargin])
+        , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
+        , xNumTicks: 16
+        , yNumTicks: 11
+        , rightAxis: d3.svg.axis().scale(
+            d3.scale.linear().domain([0, 100]).range([height - yMargin, 0 + yMargin])
+          ).ticks(10).orient('right')
+      });
+
+    </script>
+  </body>
+</html>
