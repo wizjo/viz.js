@@ -28,6 +28,6 @@ path.domain{
 .bullet .measure.s1 { fill: #EEE; }
 .bullet .title { font-size: 14px; font-weight: bold; }
 .bullet .subtitle { fill: #999; }
-.bullet .marker { stroke: none; }
+.bullet .marker { stroke: none; } /* hide the black line temporarily */
 .bullet text.tip { font-size: 14px; text-anchor: start; }
 

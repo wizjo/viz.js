@@ -40,8 +40,7 @@ var BulletChart = Chart.extend({
         .attr("height", this.height)
       .append("svg:g")
         .attr("transform", "translate(" + this.leftMargin + ", " + this.topMargin + ")")
-        .call(this.chart)
-        .on("mouseover", mouseover);
+        .call(this.chart);
     
     this.t = d3.selectAll("svg.bullet")
         .attr("text-anchor", "end");
@@ -50,7 +49,7 @@ var BulletChart = Chart.extend({
     
     this.hover_idx = -1;
     
-    // hover over bulletchart to view metric value
+    // Hover over bulletchart to view metric value
     function mouseover(d, i) {
       self.hover_idx = i;
       d3.selectAll("text.tip")
@@ -58,6 +57,16 @@ var BulletChart = Chart.extend({
       d3.selectAll("rect.measure")
         .attr("stroke", function(d, i) { return self.hover_idx==i? "#FFF" : "none"; })
         .attr("stroke-width", "2px");
+      self.hover_idx = -1;
+    }
+    
+    // And hide this value metric again when mouseout
+    function mouseout(d, i) {
+      self.hover_idx = i;
+      d3.selectAll("text.tip")
+        .attr("fill", "none");
+      d3.selectAll("rect.measure")
+        .attr("stroke", "none")
       self.hover_idx = -1;
     }
     
@@ -71,6 +80,9 @@ var BulletChart = Chart.extend({
     
     if(this.hover_events) {
       this.addChartTips();
+      this.vis
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseout);
     }
   }
   
