@@ -1,5 +1,10 @@
 /*
-
+data = [
+  {"label":"Web", "value":76.16}, 
+  {"label":"Desktop", "value":16.81}, 
+  {"label":"Mobile", "value":4.27}, 
+  {"label":"Other", "value":2.72}, 
+  {"label":"Sharepoint", "value":0.03} ];
 */
 
 var PieChart = Chart.extend({
@@ -14,14 +19,12 @@ var PieChart = Chart.extend({
     this.rightMargin = this.rightMargin || 10;
     this.topMargin = this.topMargin || 10;
     this.bottomMargin = this.bottomMargin || 10;
-
-    this.background_color = this.background_color || "#fff";
     
     this.title = this.title || false;
     this.fill = this.fill || d3.scale.category10();
     
     this.innerRad = this.innerRad || 0;
-    this.outerRad = options.outerRad || (d3.min(this.width,this.height))/2;
+    this.outerRad = options.outerRad || (d3.min([this.width, this.height]))/2;
     
     // Actual vis
 
@@ -30,12 +33,10 @@ var PieChart = Chart.extend({
       .enter().append("svg:svg")
         .attr("width", this.width)
         .attr("height", this.height)
-        .style("background-color", this.background_color)
       .append("svg:g")
         .attr("transform", "translate(" + this.width/2 + ", " + this.height/2 + ")")
     .selectAll("g.slice")
-        .data(d3.layout.pie().value(function(d) {return d.value;})) // d is an element of the data array, 
-                                                                    // so change this to call d.whatever
+        .data(d3.layout.pie().value(function(d){ return d.value }))
         .enter()
           .append("svg:g")
             .attr("class","slice")
