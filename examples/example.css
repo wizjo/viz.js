@@ -17,3 +17,17 @@ path.domain{
   stroke: #333;
 }
 
+/* styles for Bullet Chart */
+.bullet { font: 10px sans-serif; }
+.bullet .marker { stroke: #000; stroke-width: 2px; }
+.bullet .tick line { stroke: #666; stroke-width: .5px; }
+.bullet .range.s0 { fill: #669933; }
+.bullet .range.s1 { fill: #EEEE33; } /* #FA8349 #EEEE33 */
+.bullet .range.s2 { fill: #CA3A46; } 
+.bullet .measure.s0 { fill: #CCC; }
+.bullet .measure.s1 { fill: #EEE; }
+.bullet .title { font-size: 14px; font-weight: bold; }
+.bullet .subtitle { fill: #999; }
+.bullet .marker { stroke: none; }
+.bullet text.tip { font-size: 14px; text-anchor: start; }
+
