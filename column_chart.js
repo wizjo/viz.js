@@ -39,7 +39,7 @@ var ColumnChart = Chart.extend({
     
     // Override width based on spacing between bars and width of bar given
     this.width = ((data.labels.length - 1) * this.space + 
-      (this.stacked ? 1 : this.series.length) * data.labels.length * this.barWidth) + this.rightMargin;
+      (this.stacked ? 1 : this.series.length) * data.labels.length * this.barWidth) + this.leftMargin + this.rightMargin + this.yAxisMargin;
     
     this.max = this.max || d3.max($.map(data.values, function(values, key){ 
       return d3.max($.map(values, 
