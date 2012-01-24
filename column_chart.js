@@ -70,7 +70,7 @@ var ColumnChart = Chart.extend({
           if (d == 0) { return 0; }
           if (d > 1) { return wholeNumber(d); }
           if (d >= 0.01) { return n.toPrecision(2); }
-          return parseFloat(d.toPrecision(2));
+          return parseFloat(n.toPrecision(2)).toExponential();
         }
     ).orient(this.yaxis_position);
     
