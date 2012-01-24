@@ -24,8 +24,14 @@ var ColumnChart = Chart.extend({
     
     this.baseline = this.baseline || "bottom"; // available values: "top", "bottom"
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
-    this.fill = this.fill || d3.scale.category10();
-    this.addRules = this.addRules || true;
+    // this.fill = this.fill || d3.scale.category10();
+    
+    // Set up rules, axis, ticks
+    this.numRules = this.numRules || 1; // number of rules to add, first rule is where the bars' baseline is
+    this.yaxis_position = this.yaxis_position || "left"; // position to place yaxis: "left", "right", "none"
+    this.ynumTicks = this.ynumTicks || 10; // number of ticks on the Y Axis
+    this.yAxisMargin = this.yAxisMargin || 30;
+    this.show_labels = this.show_labels || false;
     
     // Reformat data for charting (and labeling)
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
@@ -33,7 +39,7 @@ var ColumnChart = Chart.extend({
     
     // Override width based on spacing between bars and width of bar given
     this.width = ((data.labels.length - 1) * this.space + 
-      (this.stacked ? 1 : this.series.length) * data.labels.length * this.barWidth) + this.bottomMargin;
+      (this.stacked ? 1 : this.series.length) * data.labels.length * this.barWidth) + this.rightMargin;
     
     this.max = this.max || d3.max($.map(data.values, function(values, key){ 
       return d3.max($.map(values, 
@@ -57,34 +63,74 @@ var ColumnChart = Chart.extend({
         .range([self.height - self.topMargin - self.bottomMargin, 0]);
     }
     
+    // Define yAxis
+    this.yAxis = d3.svg.axis().scale(this.vScale).ticks(this.ynumTicks).tickFormat(
+        function(d) {
+          var wholeNumber = d3.format(",0d");
+          if (d == 0) { return 0; }
+          if (d > 1) { return wholeNumber(d); }
+          if (d >= 0.01) { return n.toPrecision(2); }
+          return parseFloat(d.toPrecision(2));
+        }
+    ).orient(this.yaxis_position);
+    
     this.vis = d3.select(selector)
         .append("svg:svg")
+        .attr("class", "column_chart")
         .attr("width", this.width)
         .attr("height", this.height);
     
     this.g = this.vis.append("svg:g")
-        .attr("transform", "translate(" + this.leftMargin + ", "+ this.topMargin + ")");
+        .attr("transform", "translate(" + (this.yaxis_position === 'left'? this.yAxisMargin+this.leftMargin : this.leftMargin) + ", "+ this.topMargin + ")");
     
-    if(this.addRules || this.numRules && this.numRules > 0) {
+    // Draw chart
+    $.each(data.values, function(key, values) {
+      self.addBar(key, values);
+    })
+    
+    // Add rules
+    if(this.numRules > 0) {
       this.g.selectAll("line.rule")
           .data(function() {
             // Get rid of the last item in the array since ticks return (numRules + 1)
             rules = self.vScale.ticks(self.numRules);
             return $.map(rules, function(value, idx){ if(idx<rules.length-1) { return [value] } });
           })
-        .enter().append("line")
-          .attr("class", "rule")
+        .enter().append("svg:line")
+          .attr("class", function(d, i){ return i>0? "rule" : "rule_first"})
           .attr("y1", this.vScale)
           .attr("y2", this.vScale)
-          .attr("x1", 0)
-          .attr("x2", this.width)
-          .style("stroke", function(d, i){ return i>0? "#ccc" : "#333"; })
-          .attr("stroke-width", function(d, i){ return i>0? 0.6:1 });
+          .attr("x1", -this.leftMargin)
+          .attr("x2", this.width);
     }
     
-    $.each(data.values, function(key, values) {
-      self.addBar(key, values);
-    })
+    // Add Y Axis
+    if(this.yaxis_position !== 'none') {
+      this.g.append("svg:g")
+          .attr("class", "y axis")
+          .attr("transform", function() {
+            if(self.yaxis_position === 'left') {
+              return "translate(-" + self.leftMargin + ", " + 0 + ")"
+            } else{
+              return "translate(" + (self.width - self.rightMargin) + ", " + 0 + ")"
+            } })
+          .call(this.yAxis);
+    }
+    
+    // Add labels against baseline
+    if(this.show_labels) {
+      this.g.selectAll("text.label")
+          .data(data.labels)
+        .enter().append("svg:text")
+          .attr("class", "label")
+          .attr("x", function(d, i) { 
+            return (self.stacked? 0 : parseInt(key) * self.barWidth) + i * ((self.stacked ? 1 : self.series.length)*self.barWidth + self.space); 
+          })
+          .attr("y", this.height - this.topMargin  - this.bottomMargin)
+          .attr("text-anchor", "start")
+          .attr("dy", "1em")
+          .text(function(d) { return d; });
+    }
   }
   
   , addBar: function(key, values) {
@@ -105,7 +151,6 @@ var ColumnChart = Chart.extend({
           if(self.baseline === 'top') { return self.vScale(d.y); }
           else { return self.vScale(0) - self.vScale(d.y); }
         })
-        .attr("stroke", "none")
-        .attr("fill", function(d, i) { return self.fill("bar_" + key + "_" + i) });
+        .attr("fill", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : "none" });
   }
 });

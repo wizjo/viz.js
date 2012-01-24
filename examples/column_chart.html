@@ -31,15 +31,19 @@
       var chart = new ColumnChart("#chart-div", data, {
           height: 450
         , space: 40 // spacing between bars
-        , leftMargin: 5
-        , rightMargin: 5
+        , leftMargin: 10 // give it a larger leftMargin when you want the y-axis to be on the left-hand side
+        , rightMargin: 50
         , topMargin: 5
-        , bottomMargin: 5
+        , bottomMargin: 40 // more space for placing group labels
         , baseline: "bottom"
         , stacked: true // false: grouped bars; true: stacked bars (when there's one than one series)
-        , numRules: 1
-        , barWidth: 20
-        , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
+        , barWidth: 40
+        // , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc']) //comment out this line if you wanna style bars at a series level in css
+        , numRules: 1 // number of rules to add, first rule is where the bars' baseline is
+        , yaxis_position: "left" // position to place yaxis: "left", "right"
+        , ynumTicks: 5 // number of ticks on the Y Axis
+        , yAxisMargin: 30
+        , show_labels: true
        });
     </script>
   </body>
