@@ -123,7 +123,7 @@ var LineChart = Chart.extend({
   }
   
   , addDots: function(key, values) {
-    self = this;
+    var self = this;
     this.g.selectAll("circle.series_" + key)
         .data(values)
       .enter().append("svg:circle")
@@ -138,7 +138,7 @@ var LineChart = Chart.extend({
   }
   
   , addLabels: function(key, values) {
-    self = this;
+    var self = this;
     this.g.selectAll("text.label_" + key)
         .data(values)
       .enter().append("svg:text")
@@ -156,19 +156,19 @@ var LineChart = Chart.extend({
   
   // Hover over bulletchart to view metric value
   , mouseover: function(key, d, i) {
-    self = this;
+    var self = this;
     self.hover_idx = i;
-    this.vis.selectAll("text.label_" + key)
+    this.g.selectAll("text.label_" + key)
         .attr("fill", function(d, i) { return i === self.hover_idx? self.fill(key) : "none"; });
     self.hover_idx = -1;
   }
   
   // And hide this value metric again when mouseout
   , mouseout: function(key, d, i) {
-    self.hover_idx = i;
+    this.hover_idx = i;
     this.g.selectAll("text.label_" + key)
         .attr("fill", "none")
-    self.hover_idx = -1;
+    this.hover_idx = -1;
   }
   
 });
