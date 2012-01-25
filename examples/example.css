@@ -10,14 +10,16 @@ line.tick { stroke: #666; }
 path.domain{ fill: none; stroke: #333; }
 line.rule { stroke: #CCC; stroke-width: 0.6px; }
 line.rule_first { stroke: #333; stroke-width: 1px; }
-text.series { font-size: 16px; font-weight: bold; }
-circle.series:hover{ stroke: #CCC; stroke-width: 2px; }
+
+/* styles for LineChart */
+circle.series_0:hover, circle.series_1:hover, circle.series_2:hover { stroke: #666; stroke-width: 2px; }
+path.area { fill-opacity: 0.2; }
 
 .column_chart .series_0 { fill: #0092BC; }
 .column_chart .series_1 { fill: #51BDF1; }
 .column_chart .label { fill: #666; }
 
-/* styles for Bullet Chart */
+/* styles for BulletChart */
 .bullet { font: 10px sans-serif; }
 .bullet .marker { stroke: #000; stroke-width: 2px; }
 .bullet .tick line { stroke: #666; stroke-width: .5px; }

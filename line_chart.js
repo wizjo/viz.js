@@ -12,9 +12,7 @@ var LineChart = Chart.extend({
     var self = this;
     
     this.stacked = this.stacked || false;
-    if(this.stacked) {
-      data = d3.layout.stack()($.map(data, function(values, key){ return [values]; }));
-    }
+    data = d3.layout.stack()($.map(data, function(values, key){ return [values]; }));
     
     // Setup, all these can be overwritten by options
     this.startX = this.startX || d3.min($.map(data, function(values){ return values[0].x; }));
@@ -57,7 +55,7 @@ var LineChart = Chart.extend({
         .x(function(d) { return self.x((self.xLineTransform && self.xLineTransform(d.x)) || d.x); })
         .y(function(d) { 
           return -1 * self.y(
-            (self.yLineTransform && self.yLineTransform(this.stacked? (d.y + d.y0) : d.y)) || this.stacked? (d.y + d.y0) : d.y
+            (self.yLineTransform && self.yLineTransform(self.stacked? (d.y + d.y0) : d.y)) || self.stacked? (d.y + d.y0) : d.y
           ); 
         });
 
@@ -67,24 +65,17 @@ var LineChart = Chart.extend({
         .y0(function(d) { return -1 * (self.stacked ? self.y(d.y0) : self.yMargin) })
         .y1(function(d) { 
           return -1 * self.y(
-            (self.yLineTransform && self.yLineTransform(this.stacked? (d.y + d.y0) : d.y)) || this.stacked? (d.y + d.y0) : d.y
+            (self.yLineTransform && self.yLineTransform(self.stacked? (d.y + d.y0) : d.y)) || self.stacked? (d.y + d.y0) : d.y
           ); 
         });
-
-    // Add the lines, conditionally fill the area underneath
-    $.each(data, function(key, values) {
-      self.addLine(key, values);
-      if(self.fillShades) { self.addArea(key, values); }
-      if(self.drawDots) { self.addDots(key, values); self.addLabels(key, values); }
-    })
-
+    
     // X Axis
     this.xAxis = this.xAxis || d3.svg.axis().scale(this.x).ticks(this.xNumTicks).orient('bottom');
     this.vis.append("svg:g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + (this.height - this.yMargin) + ")")
         .call(this.xAxis);
-
+    
     // Left Y axis
     this.yAxis = this.yAxis || d3.svg.axis().scale(this.yAxisScale).ticks(self.yNumTicks).tickFormat(
         function(n) {
@@ -99,7 +90,7 @@ var LineChart = Chart.extend({
         .attr("class", "y axis")
         .attr("transform", "translate(" + this.xLeftMargin + ", 0)")
         .call(this.yAxis);
-
+    
     if(this.rightAxis) {
       this.rightAxis = this.rightAxis || d3.svg.axis().scale(
         d3.scale.linear().domain([0, self.max]).range([this.height - this.yMargin, 0 + this.yMargin])).ticks(this.yNumTicks).orient('right');
@@ -109,24 +100,12 @@ var LineChart = Chart.extend({
           .call(this.rightAxis);
     }
     
-    // Hover over bulletchart to view metric value
-    this.mouseover = function(key, d, i) {
-      self = this;
-      self.hover_idx = i;
-      
-      this.vis.selectAll("text." + key)
-          .attr("fill", function(d, i) { return i === self.hover_idx? self.fill(key) : "none"; });
-                
-      self.hover_idx = -1;
-    }
-    
-    // And hide this value metric again when mouseout
-    this.mouseout = function(key, d, i) {
-      self.hover_idx = i;
-      this.g.selectAll("text." + key)
-          .attr("fill", "none")
-      self.hover_idx = -1;
-    }
+    // Add the lines, conditionally fill the area underneath
+    $.each(data, function(key, values) {
+      self.addLine(key, values);
+      if(self.fillShades) { self.addArea(key, values); }
+      if(self.drawDots) { self.addDots(key, values); self.addLabels(key, values); }
+    })
   }
 
   , addLine: function(key, values) {
@@ -145,30 +124,25 @@ var LineChart = Chart.extend({
   
   , addDots: function(key, values) {
     self = this;
-    this.dots = this.g.selectAll("circle.series " + key)
+    this.g.selectAll("circle.series_" + key)
         .data(values)
       .enter().append("svg:circle")
-        .attr("class", "series " + key)
+        .attr("class", "series_" + key)
         .attr("cx", function(d) { return self.x((self.xLineTransform && self.xLineTransform(d.x)) || d.x); })
-        .attr("cy", function(d) { 
-          return -1 * self.y(
-            (self.yLineTransform && self.yLineTransform(self.stacked? (d.y + d.y0) : d.y)) || self.stacked? (d.y + d.y0) : d.y
-          );
+        .attr("cy", function(d) { return -1 * self.y( (self.yLineTransform && self.yLineTransform(self.stacked? (d.y + d.y0) : d.y)) || self.stacked? (d.y + d.y0) : d.y );
         })
         .attr("r", this.dot_radius)
-        .attr("fill", this.fill(key));
-    this.dots
+        .attr("fill", this.fill(key))
         .on("mouseover", function(d, i) { return self.mouseover(key, d, i); })
         .on("mouseout",  function(d, i) { return self.mouseout(key, d, i); });
   }
   
   , addLabels: function(key, values) {
     self = this;
-    this.dots = this.g.selectAll("text.series " + key)
+    this.g.selectAll("text.label_" + key)
         .data(values)
       .enter().append("svg:text")
-        .attr("class", "series " + key)
-        // .attr("text-anchor", "start")
+        .attr("class", "label_" + key)
         .attr("transform", "translate("+ this.dot_radius +", 0)")
         .attr("dx", function(d) { return self.x((self.xLineTransform && self.xLineTransform(d.x)) || d.x); })
         .attr("dy", function(d) { 
@@ -178,6 +152,23 @@ var LineChart = Chart.extend({
         })
         .attr("fill", "none")
         .text(function(d) { return d.y; });
+  }
+  
+  // Hover over bulletchart to view metric value
+  , mouseover: function(key, d, i) {
+    self = this;
+    self.hover_idx = i;
+    this.vis.selectAll("text.label_" + key)
+        .attr("fill", function(d, i) { return i === self.hover_idx? self.fill(key) : "none"; });
+    self.hover_idx = -1;
+  }
+  
+  // And hide this value metric again when mouseout
+  , mouseout: function(key, d, i) {
+    self.hover_idx = i;
+    this.g.selectAll("text.label_" + key)
+        .attr("fill", "none")
+    self.hover_idx = -1;
   }
   
 });
