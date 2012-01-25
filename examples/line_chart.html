@@ -46,8 +46,8 @@
         , startX: startX
         , endX: endX
         , xLineTransform: function(n) { return new Date(time_ids[n]); }
-        , stacked: true
-        , fillShades: true
+        , stacked: false
+        , fillShades: false
         , x: d3.time.scale().domain([startX, endX]).range([0 + xLeftMargin, width - xLeftMargin - xRightMargin])
         , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
         , xNumTicks: 16
@@ -55,6 +55,9 @@
         , rightAxis: d3.svg.axis().scale(
             d3.scale.linear().domain([0, 100]).range([height - yMargin, 0 + yMargin])
           ).ticks(10).orient('right')
+        , drawDots: true // option to add dots to lines
+        , hover_events: true
+        , dot_radius: 5
       });
 
     </script>

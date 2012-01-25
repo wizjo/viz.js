@@ -38,6 +38,11 @@ var LineChart = Chart.extend({
     this.yNumTicks = this.yNumTicks || 4;
     this.fill = this.fill || d3.scale.category10();
     this.fillShades = this.fillShades || false;
+    this.drawDots = this.drawDots || false;
+    
+    this.hover_events = this.hover_events || false;
+    this.hover_idx = -1;
+    this.dot_radius = this.dot_radius || 5;
 
     this.vis = d3.select(selector)
         .append("svg:svg")
@@ -70,17 +75,18 @@ var LineChart = Chart.extend({
     $.each(data, function(key, values) {
       self.addLine(key, values);
       if(self.fillShades) { self.addArea(key, values); }
+      if(self.drawDots) { self.addDots(key, values); self.addLabels(key, values); }
     })
 
     // X Axis
-    var xAxis = options.xAxis || d3.svg.axis().scale(this.x).ticks(this.xNumTicks).orient('bottom');
+    this.xAxis = this.xAxis || d3.svg.axis().scale(this.x).ticks(this.xNumTicks).orient('bottom');
     this.vis.append("svg:g")
         .attr("class", "x axis")
         .attr("transform", "translate(0," + (this.height - this.yMargin) + ")")
-        .call(xAxis);
+        .call(this.xAxis);
 
     // Left Y axis
-    var yAxis = options.yAxis || d3.svg.axis().scale(this.yAxisScale).ticks(self.yNumTicks).tickFormat(
+    this.yAxis = this.yAxis || d3.svg.axis().scale(this.yAxisScale).ticks(self.yNumTicks).tickFormat(
         function(n) {
             var wholeNumber = d3.format(",0d");
             if (n == 0) { return 0; }
@@ -92,18 +98,34 @@ var LineChart = Chart.extend({
     this.vis.append("svg:g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + this.xLeftMargin + ", 0)")
-        .call(yAxis);
+        .call(this.yAxis);
 
-    // Add the right axis, possibly with a default, if applicable
-    if (options.rightAxis === true) {
-      options.rightAxis = d3.svg.axis().scale(
+    if(this.rightAxis) {
+      this.rightAxis = this.rightAxis || d3.svg.axis().scale(
         d3.scale.linear().domain([0, self.max]).range([this.height - this.yMargin, 0 + this.yMargin])).ticks(this.yNumTicks).orient('right');
-    }
-    if (options.rightAxis) {
       this.vis.append("svg:g")
           .attr("class", "y axis right")
           .attr("transform", "translate(" + (this.width - this.xLeftMargin - this.xRightMargin) + ", 0)")
-          .call(options.rightAxis);
+          .call(this.rightAxis);
+    }
+    
+    // Hover over bulletchart to view metric value
+    this.mouseover = function(key, d, i) {
+      self = this;
+      self.hover_idx = i;
+      
+      this.vis.selectAll("text." + key)
+          .attr("fill", function(d, i) { return i === self.hover_idx? self.fill(key) : "none"; });
+                
+      self.hover_idx = -1;
+    }
+    
+    // And hide this value metric again when mouseout
+    this.mouseout = function(key, d, i) {
+      self.hover_idx = i;
+      this.g.selectAll("text." + key)
+          .attr("fill", "none")
+      self.hover_idx = -1;
     }
   }
 
@@ -119,6 +141,43 @@ var LineChart = Chart.extend({
         .attr("class", "area " + key)
         .attr("d", this.area(values))
         .attr("fill", this.fill(key));
+  }
+  
+  , addDots: function(key, values) {
+    self = this;
+    this.dots = this.g.selectAll("circle.series " + key)
+        .data(values)
+      .enter().append("svg:circle")
+        .attr("class", "series " + key)
+        .attr("cx", function(d) { return self.x((self.xLineTransform && self.xLineTransform(d.x)) || d.x); })
+        .attr("cy", function(d) { 
+          return -1 * self.y(
+            (self.yLineTransform && self.yLineTransform(self.stacked? (d.y + d.y0) : d.y)) || self.stacked? (d.y + d.y0) : d.y
+          );
+        })
+        .attr("r", this.dot_radius)
+        .attr("fill", this.fill(key));
+    this.dots
+        .on("mouseover", function(d, i) { return self.mouseover(key, d, i); })
+        .on("mouseout",  function(d, i) { return self.mouseout(key, d, i); });
+  }
+  
+  , addLabels: function(key, values) {
+    self = this;
+    this.dots = this.g.selectAll("text.series " + key)
+        .data(values)
+      .enter().append("svg:text")
+        .attr("class", "series " + key)
+        // .attr("text-anchor", "start")
+        .attr("transform", "translate("+ this.dot_radius +", 0)")
+        .attr("dx", function(d) { return self.x((self.xLineTransform && self.xLineTransform(d.x)) || d.x); })
+        .attr("dy", function(d) { 
+          return -1 * self.y(
+            (self.yLineTransform && self.yLineTransform(self.stacked? (d.y + d.y0) : d.y)) || self.stacked? (d.y + d.y0) : d.y
+          );
+        })
+        .attr("fill", "none")
+        .text(function(d) { return d.y; });
   }
   
 });

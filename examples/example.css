@@ -1,4 +1,4 @@
-body { font: 14px Helvetica Neue, Aria; }
+body { font: 14px Helvetica Neue, Arial; }
 
 .chart { margin: 20px; border: 3px solid #ccc; width: 1200px; height: 800px; padding:5px; background: #fff; }
 
@@ -10,6 +10,8 @@ line.tick { stroke: #666; }
 path.domain{ fill: none; stroke: #333; }
 line.rule { stroke: #CCC; stroke-width: 0.6px; }
 line.rule_first { stroke: #333; stroke-width: 1px; }
+text.series { font-size: 16px; font-weight: bold; }
+circle.series:hover{ stroke: #CCC; stroke-width: 2px; }
 
 .column_chart .series_0 { fill: #0092BC; }
 .column_chart .series_1 { fill: #51BDF1; }
