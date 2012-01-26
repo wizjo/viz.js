@@ -143,7 +143,7 @@ var LineChart = Chart.extend({
         .data(values)
       .enter().append("svg:text")
         .attr("class", "label_" + key)
-        .attr("transform", "translate("+ this.dot_radius +", 0)")
+        .attr("transform", "translate(-"+ 2*this.dot_radius + ", -"+ 1.5*this.dot_radius +")")
         .attr("dx", function(d) { return self.x((self.xLineTransform && self.xLineTransform(d.x)) || d.x); })
         .attr("dy", function(d) { 
           return -1 * self.y(
@@ -151,16 +151,20 @@ var LineChart = Chart.extend({
           );
         })
         .attr("fill", "none")
-        .text(function(d) { return d.y; });
+        .text(function(d) { return d3.format(",0d")(d.y); });
   }
   
   // Hover over bulletchart to view metric value
   , mouseover: function(key, d, i) {
     var self = this;
-    self.hover_idx = i;
+    this.hover_idx = i;
     this.g.selectAll("text.label_" + key)
-        .attr("fill", function(d, i) { return i === self.hover_idx? self.fill(key) : "none"; });
-    self.hover_idx = -1;
+      .attr("fill", function(d, i) { return i === self.hover_idx? self.fill(key) : "none"; })
+      .attr("opacity", 0)
+      .transition()
+        .duration(200)
+        .attr("opacity", 1);
+    this.hover_idx = -1;
   }
   
   // And hide this value metric again when mouseout
