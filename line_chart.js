@@ -12,7 +12,10 @@ var LineChart = Chart.extend({
     var self = this;
     
     this.stacked = this.stacked || false;
-    data = d3.layout.stack()($.map(data, function(values, key){ return [values]; }));
+    var values = $.map(data, function(values, key){ return [values]; });
+    if(values.length > 1) {
+      data = d3.layout.stack()($.map(data, function(values, key){ return [values]; }));
+    }
     
     // Setup, all these can be overwritten by options
     this.startX = this.startX || d3.min($.map(data, function(values){ return values[0].x; }));
