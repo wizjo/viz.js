@@ -30,8 +30,8 @@ var LineChart = Chart.extend({
     
     // Only support linear scales for the time being
     this.x = this.x || d3.scale.linear().domain([this.startX, this.endX]).range([0 + this.xLeftMargin, this.width - this.xLeftMargin - this.xRightMargin]);
-    this.y = this.y || d3.scale.linear().domain([self.min, self.max]).range([0 + this.yMargin, this.height - this.yMargin]);
-    this.yAxisScale = this.yAxisScale || d3.scale.linear().domain([0, self.max]).range([this.height - this.yMargin, 0 + this.yMargin]);
+    this.y = this.y || d3.scale.linear().domain([this.min<0? this.min:0, this.max]).range([0 + this.yMargin, this.height - this.yMargin]);
+    this.yAxisScale = this.yAxisScale || d3.scale.linear().domain([this.min<0? this.min:0, this.max]).range([this.height - this.yMargin, 0 + this.yMargin]);
     this.xNumTicks = this.xNumTicks || 6;
     this.yNumTicks = this.yNumTicks || 4;
     this.fill = this.fill || d3.scale.category10();
