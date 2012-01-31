@@ -3,11 +3,13 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Line Chart</title>
-    <link type="text/css" rel="stylesheet" href="example.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/example.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/tipsy.css">
     
     <!-- jquery -->
     <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery.tipsy.js"></script>
     
     <!-- include your local d3 library instead -->
     <script type="text/javascript" src="../lib/d3/d3.js"></script>
@@ -63,7 +65,7 @@
             d3.scale.linear().domain([0, 100]).range([height - yMargin, 0 + yMargin])
           ).ticks(10).orient('right')
         , drawDots: true // option to add dots to lines
-        , hover_events: true
+        , useTipsy: true
         , dot_radius: 5
       });
       
@@ -86,7 +88,6 @@
             d3.scale.linear().domain([0, 100]).range([height - yMargin, 0 + yMargin])
           ).ticks(10).orient('right')
         , drawDots: false // option to add dots to lines
-        , hover_events: true
         , dot_radius: 5
       });
       
@@ -109,7 +110,6 @@
             d3.scale.linear().domain([0, 100]).range([height - yMargin, 0 + yMargin])
           ).ticks(10).orient('right')
         , drawDots: true // option to add dots to lines
-        , hover_events: true
         , dot_radius: 5
       });
       
@@ -132,7 +132,7 @@
             d3.scale.linear().domain([0, 100]).range([height - yMargin, 0 + yMargin])
           ).ticks(10).orient('right')
         , drawDots: true // option to add dots to lines
-        , hover_events: true
+        , useTipsy: true
         , dot_radius: 5
       });
 

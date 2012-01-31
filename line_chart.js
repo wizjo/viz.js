@@ -40,18 +40,20 @@ var LineChart = Chart.extend({
     this.fill = this.fill || d3.scale.category10();
     this.fillShades = this.fillShades || false;
     this.drawDots = this.drawDots || false;
+    this.useTipsy = this.useTipsy || false;
     
-    this.hover_events = this.hover_events || false;
-    this.hover_idx = -1;
-    this.dot_radius = this.dot_radius || 5;
-
+    if(!this.useTipsy){ // If not using Tipsy, default to the d3 version of mouseover events
+      this.hover_idx = -1;
+      this.dot_radius = this.dot_radius || 5;
+    }
+    
     this.vis = d3.select(selector)
         .append("svg:svg")
         .attr("width", this.width)
         .attr("height", this.height);
     
     this.g = this.vis.append("svg:g")
-        .attr("transform", "translate(0, " + this.height + ")");  // TODO: Account for margin?
+        .attr("transform", "translate(0, " + this.height + ")");
 
     // Use this for adding lines
     this.line = this.line || d3.svg.line()
@@ -107,8 +109,21 @@ var LineChart = Chart.extend({
     $.each(data, function(key, values) {
       self.addLine(key, values);
       if(self.fillShades) { self.addArea(key, values); }
-      if(self.drawDots) { self.addDots(key, values); self.addLabels(key, values); }
+      if(self.drawDots) { 
+        self.addDots(key, values); 
+        if(!self.useTipsy) self.addLabels(key, values);
+      }
     })
+    
+    if(this.useTipsy) {
+      $(selector+' svg circle').tipsy({
+        gravity: 'sw', 
+        title: function() {
+          var d = this.__data__;
+          return d3.format(",0d")(d.y);
+        }
+      });
+    }
   }
 
   , addLine: function(key, values) {

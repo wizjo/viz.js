@@ -12,9 +12,9 @@ line.rule { stroke: #CCC; stroke-width: 0.6px; }
 line.rule_first { stroke: #333; stroke-width: 1px; }
 
 /* styles for LineChart */
-circle.series_0:hover, circle.series_1:hover, circle.series_2:hover { stroke: #666; stroke-width: 2px; }
+circle.series_0:hover, circle.series_1:hover, circle.series_2:hover, circle.series_likers:hover { stroke: #999; stroke-width: 2px; }
 path.area { fill-opacity: 0.2; }
-text.label_0, text.label_1, text.label_2 { font-weight: bold; }
+text.label, text.label_0, text.label_1, text.label_2, text.label_likers { font-weight: bold; }
 
 /* styles for ColumnChart */
 .column_chart .series_0 { fill: #0092BC; }
