@@ -35,3 +35,5 @@ text.label, text.label_0, text.label_1, text.label_2, text.label_likers { font-w
 .bullet .marker { stroke: none; } /* hide the black line temporarily */
 .bullet text.tip { font-size: 14px; text-anchor: start; }
 
+/* styles for PieChart */
+.pie_chart path.slice { stroke: #FFF; stroke-width: 1px; }
