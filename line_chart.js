@@ -49,6 +49,7 @@ var LineChart = Chart.extend({
     
     this.vis = d3.select(selector)
         .append("svg:svg")
+        .attr("class", "line_chart")
         .attr("width", this.width)
         .attr("height", this.height);
     
