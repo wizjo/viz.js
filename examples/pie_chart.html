@@ -31,15 +31,19 @@
         ],
         series2: [ {"label":"Web", "value":36.16}, {"label":"Desktop", "value":26.81}, 
           {"label":"Mobile", "value":14.27}, {"label":"Other", "value":2.72}, {"label":"SharePoint", "value":10.03} 
+        ], 
+        series3: [ {"label":"Web", "value":36.16}, {"label":"Desktop", "value":26.81}, 
+          {"label":"Mobile", "value":14.27}, {"label":"Other", "value":2.72}, {"label":"SharePoint", "value":10.03} 
         ]};
       var chart = new PieChart("#chart-div", data, {
-          outerRadius: 150 // Set the outer radius for the pie
+          outerRadius: 120 // Set the outer radius for the pie
         , innerRadiusRatio: 0 // ranges from 0 to 1, 0 yields a regular Pie, else bakes you a Donut
         , leftMargin: 10
         , rightMargin: 100
         , topMargin: 10
         , bottomMargin: 10
         , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc']) //use this option to style slices based on labels
+        , highlight_color: "#CECECE"
       });
     </script>
   </body>

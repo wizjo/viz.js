@@ -22,9 +22,13 @@ var PieChart = Chart.extend({
     this.innerRadiusRatio = this.innerRadiusRatio || 0;
     this.outerRadius = options.outerRadius || 200;
     this.arc = this.arc || d3.svg.arc().innerRadius(this.innerRadiusRatio * this.outerRadius).outerRadius(this.outerRadius);
+    this.highlight = this.highlight || d3.svg.arc().innerRadius(this.outerRadius).outerRadius(this.outerRadius + 8);
+    this.highlight_color = this.highlight_color || "#AEAEAE";
     
     this.vis = d3.select(selector)
         .attr("class", "pie_chart");
+    
+    this.hover_idx = -1;
     
     // Get the keys for each PieChart in the small multiples
     var pies = $.map(data, function(values, key){ return [key]; })
@@ -66,7 +70,25 @@ var PieChart = Chart.extend({
       .enter().append("svg:path")
         .attr("class", "slice")
         .attr("d", this.arc)
-        .attr("fill", function(d, i){ return self.fill(i); });
+        .attr("fill", function(d, i){ return self.fill(i); })
+        .on("mouseover", function(d, i){
+          self.hover_idx = i;
+          g.selectAll("path.highlight")
+              .attr("fill", function(d, i){ return self.hover_idx == i? self.highlight_color : "none"; });
+          self.idx = -1;
+        })
+        .on("mouseout", function(){
+          g.selectAll("path.highlight")
+              .attr("fill", "none");
+        });
+    
+    // Draw highlights
+    g.selectAll("path.highlight")
+        .data(function() { var data = $.map(value, function(d){ return d.value; }); return d3.layout.pie()(data); })
+      .enter().append("svg:path")
+        .attr("class", "highlight")
+        .attr("d", this.highlight)
+        .attr("fill", "none");
     
     // Place labels
     g.selectAll("text.label")
