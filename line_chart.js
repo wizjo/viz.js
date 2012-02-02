@@ -188,10 +188,8 @@ var LineChart = Chart.extend({
   
   // And hide this value metric again when mouseout
   , mouseout: function(key, d, i) {
-    this.hover_idx = i;
     this.g.selectAll("text.label_" + key)
         .attr("fill", "none")
-    this.hover_idx = -1;
   }
   
 });
