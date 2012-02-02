@@ -45,7 +45,7 @@ var PieChart = Chart.extend({
           var d = this.__data__;
           var i = $.inArray(d.value, $.map(value, function(d){ return d.value; }));
           var labels = $.map(value, function(d){ return d.label; })
-          return labels[i] + ": " + d.value;
+          return labels[i] + ": " + d3.format(",2d")(d.value);
         }
       });
     })
