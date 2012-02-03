@@ -22,6 +22,9 @@ line.rule_first { stroke: #333; stroke-width: 1px; }
 .column_chart .label { fill: #666; }
 .column_chart rect:hover { stroke: #666; stroke-width: 1px; }
 
+/* styles for BarChart */
+.bar_chart rect:hover { stroke: #666; stroke-width: 1px; }
+
 /* styles for BulletChart */
 .bullet { font: 10px sans-serif; }
 .bullet .marker { stroke: #000; stroke-width: 2px; }

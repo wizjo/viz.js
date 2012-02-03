@@ -4,10 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title id="viz-title">Column Chart</title>
     <link type="text/css" rel="stylesheet" href="stylesheets/example.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/tipsy.css">
     
     <!-- jquery -->
     <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery.tipsy.js"></script>
     
     <!-- include your local d3 library instead -->
     <script type="text/javascript" src="../lib/d3/d3.js"></script>
@@ -29,12 +31,12 @@
         }
       };
       var chart = new ColumnChart("#chart-div", data, {
-          height: 450
+          height: 500
         , space: 40 // spacing between bars
         , leftMargin: 10 // give it a larger leftMargin when you want the y-axis to be on the left-hand side
         , rightMargin: 50
         , topMargin: 5
-        , bottomMargin: 40 // more space for placing group labels
+        , bottomMargin: 80 // more space for placing group labels
         , baseline: "bottom"
         , stacked: true // false: grouped bars; true: stacked bars (when there's one than one series)
         , barWidth: 40
@@ -44,6 +46,8 @@
         , ynumTicks: 5 // number of ticks on the Y Axis
         , yAxisMargin: 30
         , show_labels: true
+        , label_position: 'tilted' // available values: 'vertical', 'tilted'
+        , useTipsy: true
        });
     </script>
   </body>

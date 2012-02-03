@@ -32,6 +32,8 @@ var ColumnChart = Chart.extend({
     this.ynumTicks = this.ynumTicks || 10; // number of ticks on the Y Axis
     this.yAxisMargin = this.yAxisMargin || 30;
     this.show_labels = this.show_labels || false;
+    this.label_position = this.label_position || "vertical";
+    this.useTipsy = this.useTipsy || false;
     
     // Reformat data for charting (and labeling)
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
@@ -127,9 +129,24 @@ var ColumnChart = Chart.extend({
             return (self.stacked? 0 : parseInt(key) * self.barWidth) + i * ((self.stacked ? 1 : self.series.length)*self.barWidth + self.space); 
           })
           .attr("y", this.height - this.topMargin  - this.bottomMargin)
-          .attr("text-anchor", "start")
-          .attr("dy", "1em")
+          .attr("text-anchor", "end")
+          .attr("transform", function(d, i){
+            return "translate(" + ((self.stacked? 0.55 : 1.05) * self.barWidth) + ", " + (self.label_position=="vertical"? 5: 8) + ")" 
+              + "rotate(" + (self.label_position == 'vertical'? "-90" : "-45")
+              + " " + ((self.stacked? 0 : parseInt(key) * self.barWidth) + i * ((self.stacked ? 1 : self.series.length)*self.barWidth + self.space))
+              + " " + (self.height - self.topMargin  - self.bottomMargin) + ")";
+          })
           .text(function(d) { return d; });
+    }
+    
+    if(this.useTipsy) {
+      $(selector+' rect').tipsy({
+        gravity: 'sw', 
+        title: function() {
+          var d = this.__data__;
+          return d3.format(",0%")(d.y);
+        }
+      });
     }
   }
   
