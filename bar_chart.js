@@ -26,6 +26,7 @@ var BarChart = Chart.extend({
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
     this.fill = this.fill || d3.scale.category10();
     this.addRules = this.addRules || true;
+    this.useTipsy = this.useTipsy || false;
     
     // Reformat data for charting (and labeling)
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
@@ -59,6 +60,7 @@ var BarChart = Chart.extend({
     
     this.vis = d3.select(selector)
         .append("svg:svg")
+        .attr("class", "bar_chart")
         .attr("width", this.width)
         .attr("height", this.height);
     
@@ -85,6 +87,16 @@ var BarChart = Chart.extend({
     $.each(data.values, function(key, values) {
       self.addBar(key, values);
     })
+    
+    if(this.useTipsy) {
+      $(selector+' rect').tipsy({
+        gravity: self.baseline == 'right'? 'e' : 'w', 
+        title: function() {
+          var d = this.__data__;
+          return d3.format(",0%")(d.y);
+        }
+      });
+    }
   }
   
   , addBar: function(key, values) {

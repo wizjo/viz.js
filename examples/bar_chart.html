@@ -4,10 +4,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title id="viz-title">Bar Chart</title>
     <link type="text/css" rel="stylesheet" href="stylesheets/example.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/tipsy.css">
     
     <!-- jquery -->
     <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery.tipsy.js"></script>
     
     <!-- include your local d3 library instead -->
     <script type="text/javascript" src="../lib/d3/d3.js"></script>
@@ -40,6 +42,7 @@
         , numRules: 10
         , barWidth: 20
         , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
+        , useTipsy: true
        });
     </script>
   </body>
