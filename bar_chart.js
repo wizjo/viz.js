@@ -27,6 +27,7 @@ var BarChart = Chart.extend({
     this.fill = this.fill || d3.scale.category10();
     this.addRules = this.addRules || true;
     this.useTipsy = this.useTipsy || false;
+    this.formatter = this.formatter || ".2f";
     
     // Reformat data for charting (and labeling)
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
@@ -92,7 +93,7 @@ var BarChart = Chart.extend({
         gravity: self.baseline == 'right'? 'e' : 'w', 
         title: function() {
           var d = this.__data__;
-          return d3.format(",0%")(d.y);
+          return d3.format(self.formatter)(d.y);
         }
       });
     }

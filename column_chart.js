@@ -34,6 +34,7 @@ var ColumnChart = Chart.extend({
     this.show_labels = this.show_labels || false;
     this.label_position = this.label_position || "vertical";
     this.useTipsy = this.useTipsy || false;
+    this.formatter = this.formatter || ".2f";
     
     // Reformat data for charting (and labeling)
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
@@ -143,7 +144,7 @@ var ColumnChart = Chart.extend({
         gravity: 'sw', 
         title: function() {
           var d = this.__data__;
-          return d3.format(",0%")(d.y);
+          return d3.format(self.formatter)(d.y);
         }
       });
     }
