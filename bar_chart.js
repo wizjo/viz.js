@@ -71,8 +71,8 @@ var BarChart = Chart.extend({
     if(this.addRules || this.numRules && this.numRules > 0) {
       this.g.selectAll("line.rule")
           .data(function() {
-            rules = self.hScale.ticks(self.numRules);
-            return $.map(rules, function(value, idx){ if(idx<rules.length) { return [value] } });
+            var rules = self.hScale.ticks(self.numRules);
+            return $.map(rules, function(value, idx){ if(idx < rules.length) { return [value] } });
           })
         .enter().append("line")
           .attr("class", "rule")
