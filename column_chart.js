@@ -94,8 +94,7 @@ var ColumnChart = Chart.extend({
     if(this.numRules > 0) {
       this.g.selectAll("line.rule")
           .data(function() {
-            // Get rid of the last item in the array since ticks return (numRules + 1)
-            rules = self.vScale.ticks(self.numRules);
+            var rules = self.vScale.ticks(self.numRules);
             return $.map(rules, function(value, idx){ if(idx<rules.length-1) { return [value] } });
           })
         .enter().append("svg:line")

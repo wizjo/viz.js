@@ -70,9 +70,8 @@ var BarChart = Chart.extend({
     if(this.addRules || this.numRules && this.numRules > 0) {
       this.g.selectAll("line.rule")
           .data(function() {
-            // Get rid of the last item in the array since ticks return (numRules + 1)
             rules = self.hScale.ticks(self.numRules);
-            return $.map(rules, function(value, idx){ if(idx<rules.length-1) { return [value] } });
+            return $.map(rules, function(value, idx){ if(idx<rules.length) { return [value] } });
           })
         .enter().append("line")
           .attr("class", "rule")
