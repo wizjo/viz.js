@@ -24,6 +24,7 @@ var PieChart = Chart.extend({
     this.arc = this.arc || d3.svg.arc().innerRadius(this.innerRadiusRatio * this.outerRadius).outerRadius(this.outerRadius);
     this.highlight = this.highlight || d3.svg.arc().innerRadius(this.outerRadius).outerRadius(this.outerRadius + 8);
     this.highlight_color = this.highlight_color || "#AEAEAE";
+    this.formatter = this.formatter || ".2f";
     
     this.vis = d3.select(selector)
         .attr("class", "pie_chart");
@@ -45,7 +46,7 @@ var PieChart = Chart.extend({
           var d = this.__data__;
           var i = $.inArray(d.value, $.map(value, function(d){ return d.value; }));
           var labels = $.map(value, function(d){ return d.label; })
-          return labels[i] + ": " + d3.format(",2d")(d.value);
+          return labels[i] + ": " + d3.format(self.formatter)(d.value);
         }
       });
     })

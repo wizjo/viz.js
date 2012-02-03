@@ -41,6 +41,7 @@ var LineChart = Chart.extend({
     this.fillShades = this.fillShades || false;
     this.drawDots = this.drawDots || false;
     this.useTipsy = this.useTipsy || false;
+    this.formatter = this.formatter || ",0d";
     
     if(!this.useTipsy){ // If not using Tipsy, default to the d3 version of mouseover events
       this.hover_idx = -1;
@@ -121,7 +122,7 @@ var LineChart = Chart.extend({
         gravity: 'sw', 
         title: function() {
           var d = this.__data__;
-          return d3.format(",0d")(d.y);
+          return d3.format(self.formatter)(d.y);
         }
       });
     }
@@ -170,7 +171,7 @@ var LineChart = Chart.extend({
           );
         })
         .attr("fill", "none")
-        .text(function(d) { return d3.format(",0d")(d.y); });
+        .text(function(d) { return d3.format(self.formatter)(d.y); });
   }
   
   // Hover over bulletchart to view metric value
