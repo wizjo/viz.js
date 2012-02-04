@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title id="viz-title">Spark Line</title>
+    <link type="text/css" rel="stylesheet" href="stylesheets/example.css"/>
+    
+    <!-- jquery -->
+    <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    
+    <!-- include your local d3 library instead -->
+    <script type="text/javascript" src="../lib/d3/d3.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.chart.js"></script>
+    
+    <!-- visualizie base classes -->
+    <script type="text/javascript" src="../class.js"></script>
+    <script type="text/javascript" src="../chart.js"></script>
+    <script type="text/javascript" src="../spark_line.js"></script>
+  </head>
+  <body>
+    <div class="chart" id="chart-div" style="width:500px; height:500px;"></div>
+    <script type="text/javascript">
+      var data = { 
+        "total_users": [{"x":0,"y":34},{"x":1,"y":42},{"x":2,"y":59},{"x":3,"y":68},{"x":4,"y":91},{"x":5,"y":187},{"x":6,"y":253},{"x":7,"y":410},
+        {"x":8,"y":631},{"x":9,"y":842},{"x":10,"y":1145},{"x":11,"y":1235},{"x":12,"y":1319},{"x":13,"y":1444},{"x":14,"y":1495}, 
+        {"x":15,"y":1535},{"x":16,"y":1580},{"x":17,"y":1608},{"x":18,"y":1652},{"x":19,"y":1686},{"x":20,"y":1762},{"x":21,"y":1822}, 
+        {"x":22,"y":1874},{"x":23,"y":1982},{"x":24,"y":2142},{"x":25,"y":2530},{"x":26,"y":2623},{"x":27,"y":2677},{"x":28,"y":2807}, 
+        {"x":29,"y":2916},{"x":30,"y":3118},{"x":31,"y":3684},{"x":32,"y":4032},{"x":33,"y":4187},{"x":34,"y":4790},{"x":35,"y":6004}, 
+        {"x":36,"y":9252},{"x":37,"y":12655},{"x":38,"y":31992},{"x":39,"y":35994},{"x":40,"y":40447},{"x":41,"y":40281}],
+        "contributors": [{"x":0,"y":15},{"x":1,"y":11},{"x":2,"y":12},{"x":3,"y":18},{"x":4,"y":21},{"x":5,"y":66},{"x":6,"y":74},{"x":7,"y":115}, 
+        {"x":8,"y":152},{"x":9,"y":160},{"x":10,"y":162},{"x":11,"y":92},{"x":12,"y":92},{"x":13,"y":139},{"x":14,"y":75},{"x":15,"y":53}, 
+        {"x":16,"y":57},{"x":17,"y":54},{"x":18,"y":37},{"x":19,"y":26},{"x":20,"y":32},{"x":21,"y":28},{"x":22,"y":43},{"x":23,"y":40}, 
+        {"x":24,"y":50},{"x":25,"y":95},{"x":26,"y":51},{"x":27,"y":45},{"x":28,"y":77},{"x":29,"y":95},{"x":30,"y":123},{"x":31,"y":168}, 
+        {"x":32,"y":161},{"x":33,"y":124},{"x":34,"y":242},{"x":35,"y":449},{"x":36,"y":933},{"x":37,"y":1231},{"x":38,"y":6092}, 
+        {"x":39,"y":3795},{"x":40,"y":3889},{"x":41,"y":1210}], 
+        "likers": [{"x":0,"y":0},{"x":1,"y":0},{"x":2,"y":0},{"x":3,"y":0},{"x":4,"y":0},{"x":5,"y":0},{"x":6,"y":0},{"x":7,"y":0},{"x":8,"y":0}, 
+        {"x":9,"y":0},{"x":10,"y":0},{"x":11,"y":0},{"x":12,"y":1},{"x":13,"y":4},{"x":14,"y":1},{"x":15,"y":4},{"x":16,"y":2},{"x":17,"y":3}, 
+        {"x":18,"y":1},{"x":19,"y":4},{"x":20,"y":4},{"x":21,"y":3},{"x":22,"y":1},{"x":23,"y":2},{"x":24,"y":6},{"x":25,"y":10},{"x":26,"y":4}, 
+        {"x":27,"y":5},{"x":28,"y":5},{"x":29,"y":1},{"x":30,"y":15},{"x":31,"y":19},{"x":32,"y":11},{"x":33,"y":10},{"x":34,"y":31},{"x":35,"y":64}, 
+        {"x":36,"y":87},{"x":37,"y":116},{"x":38,"y":674},{"x":39,"y":501},{"x":40,"y":480},{"x":41,"y":187}] 
+      };
+      var width = 300
+        , height = 80
+        , xLeftMargin = 5
+        , xRightMargin = 5
+        , yMargin = 10;
+
+      var chart = new SparkLine("#chart-div", data, {
+          width: width
+        , height: height
+        , xLeftMargin: xLeftMargin
+        , xRightMargin: xRightMargin
+        , yMargin: yMargin
+        , stacked: false
+        , fillShades: false
+        , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
+        , dot_radius: 4
+        , dot_xOffset: 35 // the parameter to shift label a little bit inw
+      });
+    </script>
+  </body>
+</html>
+
+
+<script type="text/javascript">
+  
+  
+</script>
