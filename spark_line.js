@@ -44,18 +44,15 @@ var SparkLine = Chart.extend({
     this.fill = this.fill || d3.scale.category10();
     this.dot_radius = this.dot_radius || 3;
     this.dot_xOffset = this.dot_xOffset || this.width/8;
-    
-    // Background fill color
-    this.background_color = this.background_color || "#fff";
 
     this.vis = d3.select(selector)
         .append("svg:svg")
+        .attr("class", "spark_line")
         .attr("width", this.width)
-        .attr("height", this.height)
-        .style("background-color", this.background_color);
+        .attr("height", this.height);
     
     this.g = this.vis.append("svg:g")
-        .attr("transform", "translate(0, " + this.height + ")");;
+        .attr("transform", "translate(0, " + this.height + ")");
 
     // Use this for adding lines
     this.line = this.line || d3.svg.line()
