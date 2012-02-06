@@ -42,3 +42,10 @@ line.rule_first { stroke: #333; stroke-width: 1px; }
 /* styles for PieChart */
 .pie_chart path.slice { stroke: #FFF; stroke-width: 1px; }
 .pie_chart text.label { fill: #333; font-weight: normal; }
+
+/* styles for SparkBar */
+.spark_bar rect.succeeded { stroke: none; fill: #008000; }
+.spark_bar rect.running { stroke: none; fill: #ffa500; }
+.spark_bar rect.failed { stroke: none; fill: #ff0000; }
+.spark_bar rect:hover { stroke: #666; stroke-width: 2px; }
+
