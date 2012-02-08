@@ -59,11 +59,11 @@ var SparkBar = Chart.extend({
     if(self.baseline === 'top') {
       this.vScale = this.vScale || d3.scale.linear()
         .domain([(self.min < 0 ? self.min : 0), self.max])
-        .range([5, self.height - self.topMargin - self.bottomMargin]);
+        .range([self.topMargin, self.height - self.topMargin - self.bottomMargin]);
     } else {
       this.vScale = this.vScale || d3.scale.linear()
         .domain([(self.min < 0 ? self.min : 0), self.max])
-        .range([self.height - self.topMargin - self.bottomMargin, 5]);
+        .range([self.height - self.topMargin - self.bottomMargin, self.bottomMargin]);
     }
     
     this.vis = d3.select(selector)
@@ -108,8 +108,8 @@ var SparkBar = Chart.extend({
         })
         .attr("width", self.barWidth)
         .attr("height", function(d) { 
-          if(self.baseline === 'top') { return self.vScale(d.y); }
-          else { return self.vScale(0) - self.vScale(d.y); }
+          if(self.baseline === 'top') { return self.vScale(d.y) + self.topMargin; }
+          else { return self.vScale(0) - self.vScale(d.y) + self.bottomMargin; }
         })
         .attr("fill", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : "none" });
   }
