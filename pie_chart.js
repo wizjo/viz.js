@@ -99,7 +99,7 @@ var PieChart = Chart.extend({
         .attr("transform", function(d) { return "translate(" + self.arc.centroid(d) + ")"; })
         .attr("dy", ".35em")
         .attr("text-anchor", "middle")
-        .attr("display", function(d) { return d.value > 3 ? null : "none"; })
-        .text(function(d, i) { var labels = $.map(value, function(d){ return d.label; }); return labels[i]; });
+        .attr("display", function(d) { return (d.endAngle - d.startAngle) > Math.PI/6 ? null : "none"; })
+        .text(function(d, i) { return d.value; });
   }
 });
