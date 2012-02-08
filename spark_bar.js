@@ -87,7 +87,7 @@ var SparkBar = Chart.extend({
         gravity: this.baseline == 'bottom'? 'sw':'ne', 
         title: function() {
           var d = this.__data__;
-          return (d.time_id + "<br />Duration in Seconds: " + d3.format(self.formatter)(d.y));
+          return self.label && self.label(d) || (d.time_id + "<br />Duration in Seconds: " + d3.format(self.formatter)(d.y));
         }
       });
     }
