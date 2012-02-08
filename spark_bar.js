@@ -59,11 +59,11 @@ var SparkBar = Chart.extend({
     if(self.baseline === 'top') {
       this.vScale = this.vScale || d3.scale.linear()
         .domain([(self.min < 0 ? self.min : 0), self.max])
-        .range([0, self.height - self.topMargin - self.bottomMargin]);
+        .range([5, self.height - self.topMargin - self.bottomMargin]);
     } else {
       this.vScale = this.vScale || d3.scale.linear()
         .domain([(self.min < 0 ? self.min : 0), self.max])
-        .range([self.height - self.topMargin - self.bottomMargin, 0]);
+        .range([self.height - self.topMargin - self.bottomMargin, 5]);
     }
     
     this.vis = d3.select(selector)
