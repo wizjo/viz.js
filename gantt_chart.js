@@ -93,7 +93,7 @@ var GanttChart = Chart.extend({
         .attr("class", "gantt_chart")
         .attr("transform", "translate(" + this.leftMargin + ", " + this.topMargin + ")");
     
-    // Draw pies
+    // Draw bar series
     $.each(data, function(key, value){
       self.addSeries(key, value);
       
