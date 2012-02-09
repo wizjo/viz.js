@@ -101,12 +101,12 @@ var SparkBar = Chart.extend({
     
     
     if(this.useTipsy) {
-      $(selector+' rect').tipsy({
+      $(selector + ' rect').tipsy({
         html: true,
         gravity: this.baseline == 'bottom'? 'sw':'ne', 
         title: function() {
           var d = this.__data__;
-          return self.label && self.label(d) || (d.time_id + "<br />Duration in Seconds: " + d3.format(self.formatter)(d.y));
+          return d.label || (self.label && self.label(d)) || null;
         }
       });
     }
