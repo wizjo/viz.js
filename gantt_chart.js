@@ -76,12 +76,12 @@ var GanttChart = Chart.extend({
     
     // Setup
     this.width = this.width || 1000;
-    this.height = this.height || data.length * (bottomMargin + barHeight) + topMargin + 20;
     this.leftMargin = this.leftMargin || 10;
     this.rightMargin = this.rightMargin || 10;
     this.topMargin = this.topMargin || 10;
     this.bottomMargin = this.bottomMargin || 10;
     this.barHeight = this.barHeight || 20;
+    this.height = this.height || data.length * (this.bottomMargin + this.barHeight) + this.topMargin + 20;
     this.formatter = this.formatter || ".2f";
     
     // TODO: find out the xScale in case it's not specified
@@ -100,19 +100,20 @@ var GanttChart = Chart.extend({
       self.addSeries(key, value);
     })
     
+    // TODO: Draw baseline
+    
+    
     // Tipsy style mouseover
-    $(selector+' rect').tipsy({
+    $(selector+' rect.series').tipsy({
       gravity: 'sw',
       html: true,
       title: function() {
         var d = this.__data__;
         var duration = (self.xTransform(d.end_time) - self.xTransform(d.start_time)) / 1000;
-        return self.label && self.label(d) || "Started at: " + d.start_time + "UTC <br />duration: " + d3.format(self.formatter)(duration) + "sec"; 
+        return self.label && self.label(d) || 
+          "Started at: " + d.start_time + "UTC <br />duration: " + d3.format(self.formatter)(duration) + " sec"; 
       }
     });
-    
-    // TODO: Draw baseline
-    
   }
   
   , addSeries: function(key, value){
@@ -122,7 +123,7 @@ var GanttChart = Chart.extend({
     var g = this.vis
         .append("svg:g")
         .attr("class", "series " + value.id)
-        .attr("transform", "translate(" + this.leftMargin + ", " + (this.topMargin + parseInt(key) * (this.barHeight + this.bottomMargin)) +")");
+        .attr("transform", "translate(" + this.leftMargin + ", " + (this.topMargin + parseInt(key) * (this.barHeight)) +")");
     
     // Draw bars
     g.selectAll("rect.series")
@@ -136,14 +137,50 @@ var GanttChart = Chart.extend({
         })
         .attr("height", this.barHeight)
         .attr("fill", this.fill && this.fill(value.id) || "none");
+  
+    // Draw baseline
+    g.append("svg:line")
+        .attr("class", "baseline")
+        .attr("y1", this.barHeight - 1)
+        .attr("y2", this.barHeight - 1)
+        .attr("x1", 0)
+        .attr("x2", this.width - this.leftMargin - this.rightMargin);
     
     // Draw labels
-    g.append("rect:text")
-        .data(value.label)
+    var lcontainer = this.vis
+        .append("svg:g")
+        .attr("class", "labels")
+        .attr("transform", "translate(0, " + (this.topMargin + parseInt(key) * this.barHeight) + ")");
+    
+    lcontainer.append("svg:rect")
+        .attr("class", "label-containter")
+        .attr("width", this.leftMargin)
+        .attr("height", 50)
+        .attr("fill", "none");
+    
+    var label = lcontainer.append("svg:text")
         .attr("class", "title")
-        // .attr("x", )
-        // .attr("y", )
-        .attr("text-anchor", "end")
+        .attr("transform", "translate(0, " + this.topMargin/2 + ")")
+        .attr("text-anchor", "start");
+    
+    label.append("a")
+        .attr("xlink:href", function(){ return "#"; });
+    
+    label.selectAll("a")
+        .append("svg:tspan")
+        .text(function(){ return value.label; })
+    
+    // spit out project, group, and job
+    // label.selectAll("a")
+    //   .data(value.label.split('/'))
+    //     .enter().append("a")
+    //     .attr("xlink:href", function(){ return "http://data.int.yammer.com" });
+    // label.selectAll("a")
+    //     .append("svg:tspan")
+    //     .attr("class", "label")
+    //     .attr("x", 0)
+    //     .attr("y", function(d, i){ return i>0? i+"em" : 0; })
+    //     .text(function(d){ return d; });
   }
 
 });
