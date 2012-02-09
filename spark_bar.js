@@ -27,6 +27,7 @@ var SparkBar = Chart.extend({
     
     this.baseline = this.baseline || "bottom"; // available values: "top", "bottom"
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
+    this.drawBaseline = this.drawBaseline || false;
     
     // Set up rules, axis, ticks
     this.useTipsy = this.useTipsy || false;
@@ -79,6 +80,17 @@ var SparkBar = Chart.extend({
     $.each(this.values, function(key, values) {
       self.addBar(key, values);
     })
+    
+    // Draw Baseline
+    if(this.drawBaseline) {
+      this.vis
+          .append("svg:line")
+          .attr("class", "rule_first")
+          .attr("y1", this.height - 1)
+          .attr("y2", this.height - 1)
+          .attr("x1", this.leftMargin)
+          .attr("x2", this.width - this.rightMargin);
+    }
     
     
     if(this.useTipsy) {

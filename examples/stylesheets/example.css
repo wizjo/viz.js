@@ -48,4 +48,11 @@ line.rule_first { stroke: #333; stroke-width: 1px; }
 .spark_bar rect.running { stroke: none; fill: #ffa500; }
 .spark_bar rect.failed { stroke: none; fill: #ff0000; }
 .spark_bar rect:hover { stroke: #666; stroke-width: 2px; }
+.spark_bar line.rule_first { stroke: #666; stroke-width: 2px; }
+
+/* styles for GanttChart */
+.gantt_chart rect.succeeded { stroke: none; fill: #008000; }
+.gantt_chart rect.running { stroke:none; fill: #ffa500; }
+.gantt_chart rect.failed { stroke: none; fill: #ff0000; }
+.gantt_chart rect:hover { stroke: #999; stroke-width: 2px; }
 
