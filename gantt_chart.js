@@ -76,6 +76,7 @@ var GanttChart = Chart.extend({
     
     // Setup
     this.width = this.width || 1000;
+    this.height = this.height || data.length * (bottomMargin + barHeight) + topMargin + 20;
     this.leftMargin = this.leftMargin || 10;
     this.rightMargin = this.rightMargin || 10;
     this.topMargin = this.topMargin || 10;
@@ -90,23 +91,25 @@ var GanttChart = Chart.extend({
     
     this.vis = d3.select(selector)
         .append("svg:svg")
-        .attr("class", "gantt_chart");
+        .attr("class", "gantt_chart")
+        .attr("width", this.width)
+        .attr("height", this.height);
     
     // Draw bar series
     $.each(data, function(key, value){
       self.addSeries(key, value);
-      
-      // Tipsy style mouseover
-      $(selector+' rect').tipsy({
-        gravity: 'sw',
-        html: true,
-        title: function() {
-          var d = this.__data__;
-          var duration = (self.xTransform(d.end_time) - self.xTransform(d.start_time)) / 1000;
-          return self.label && self.label(d) || "Started at: " + d.start_time + "UTC <br />duration: " + d3.format(self.formatter)(duration) + "sec"; 
-        }
-      });
     })
+    
+    // Tipsy style mouseover
+    $(selector+' rect').tipsy({
+      gravity: 'sw',
+      html: true,
+      title: function() {
+        var d = this.__data__;
+        var duration = (self.xTransform(d.end_time) - self.xTransform(d.start_time)) / 1000;
+        return self.label && self.label(d) || "Started at: " + d.start_time + "UTC <br />duration: " + d3.format(self.formatter)(duration) + "sec"; 
+      }
+    });
     
     // TODO: Draw baseline
     
@@ -119,7 +122,7 @@ var GanttChart = Chart.extend({
     var g = this.vis
         .append("svg:g")
         .attr("class", "series " + value.id)
-        .attr("transform", "translate(0, "+ (this.topMargin + parseInt(key) * (this.barHeight + this.bottomMargin)) +")");
+        .attr("transform", "translate(" + this.leftMargin + ", " + (this.topMargin + parseInt(key) * (this.barHeight + this.bottomMargin)) +")");
     
     // Draw bars
     g.selectAll("rect.series")
