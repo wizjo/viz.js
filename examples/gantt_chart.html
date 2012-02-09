@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title id="viz-title">Gantt Chart</title>
+    <link type="text/css" rel="stylesheet" href="stylesheets/example.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/tipsy.css"/>
+    
+    <!-- jquery -->
+    <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery.tipsy.js"></script>
+    
+    <!-- include your local d3 library instead -->
+    <script type="text/javascript" src="../lib/d3/d3.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.chart.js"></script>
+    
+    <!-- visualizie base classes -->
+    <script type="text/javascript" src="../class.js"></script>
+    <script type="text/javascript" src="../chart.js"></script>
+    <script type="text/javascript" src="../gantt_chart.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.time.js"></script>
+  </head>
+  <body>
+    <h1>Gantt Chart</h1>
+    <div class="chart" id="chart-div" style="width:1200px; height:900px;"></div>
+    <script type="text/javascript">
+    var data = [
+      {"id":1, "param":{"period":"2001"},
+        "values":[
+        {"end_time":"2012/02/07 17:57:57","state":"succeeded","start_time":"2012/02/07 17:57:36"},
+        {"end_time":"2012/02/07 20:03:21","state":"succeeded","start_time":"2012/02/07 20:03:16"},
+        {"end_time":"2012/02/08 08:04:43","state":"succeeded","start_time":"2012/02/08 08:04:30"}],
+        "label":"verthouse/dashboard_rollups/activation_sources"
+      },
+      {"id":2, "param":{"period":"2001"},
+        "values":[
+        {"end_time":"2012/02/07 17:57:56","state":"succeeded","start_time":"2012/02/07 17:57:35"},
+        {"end_time":"2012/02/07 18:02:33","state":"succeeded","start_time":"2012/02/07 18:02:28"},
+        {"end_time":"2012/02/07 19:02:41","state":"succeeded","start_time":"2012/02/07 19:02:31"},
+        {"end_time":"2012/02/07 20:02:37","state":"succeeded","start_time":"2012/02/07 20:02:29"},
+        {"end_time":"2012/02/07 21:02:33","state":"succeeded","start_time":"2012/02/07 21:02:25"},
+        {"end_time":"2012/02/07 22:02:30","state":"succeeded","start_time":"2012/02/07 22:02:27"},
+        {"end_time":"2012/02/07 23:02:28","state":"succeeded","start_time":"2012/02/07 23:02:25"},
+        {"end_time":"2012/02/08 00:02:36","state":"succeeded","start_time":"2012/02/08 00:02:29"},
+        {"end_time":"2012/02/08 01:02:29","state":"succeeded","start_time":"2012/02/08 01:02:26"},
+        {"end_time":"2012/02/08 02:02:28","state":"succeeded","start_time":"2012/02/08 02:02:25"},
+        {"end_time":"2012/02/08 03:02:25","state":"succeeded","start_time":"2012/02/08 03:02:22"},
+        {"end_time":"2012/02/08 04:02:27","state":"succeeded","start_time":"2012/02/08 04:02:24"},
+        {"end_time":"2012/02/08 05:02:30","state":"succeeded","start_time":"2012/02/08 05:02:27"},
+        {"end_time":"2012/02/08 06:02:30","state":"succeeded","start_time":"2012/02/08 06:02:27"},
+        {"end_time":"2012/02/08 07:02:34","state":"succeeded","start_time":"2012/02/08 07:02:29"},
+        {"end_time":"2012/02/08 08:02:22","state":"succeeded","start_time":"2012/02/08 08:02:19"},
+        {"end_time":"2012/02/08 09:02:28","state":"succeeded","start_time":"2012/02/08 09:02:25"}],
+        "label":"verthouse/dashboard_rollups/activations"
+      },
+      {"id":3, "param":{"period":"2007"},
+        "values":[
+        {"end_time":"2012/02/07 17:57:34","state":"succeeded","start_time":"2012/02/07 17:57:24"},
+        {"end_time":"2012/02/07 18:02:30","state":"succeeded","start_time":"2012/02/07 18:02:23"},
+        {"end_time":"2012/02/07 19:02:40","state":"succeeded","start_time":"2012/02/07 19:02:28"},
+        {"end_time":"2012/02/07 20:02:26","state":"succeeded","start_time":"2012/02/07 20:02:22"},
+        {"end_time":"2012/02/07 21:02:33","state":"succeeded","start_time":"2012/02/07 21:02:26"},
+        {"end_time":"2012/02/07 22:02:39","state":"succeeded","start_time":"2012/02/07 22:02:31"},
+        {"end_time":"2012/02/07 23:02:31","state":"succeeded","start_time":"2012/02/07 23:02:27"},
+        {"end_time":"2012/02/08 00:02:33","state":"succeeded","start_time":"2012/02/08 00:02:27"},
+        {"end_time":"2012/02/08 01:02:28","state":"succeeded","start_time":"2012/02/08 01:02:24"},
+        {"end_time":"2012/02/08 02:02:31","state":"succeeded","start_time":"2012/02/08 02:02:27"},
+        {"end_time":"2012/02/08 03:02:29","state":"succeeded","start_time":"2012/02/08 03:02:26"},
+        {"end_time":"2012/02/08 04:02:28","state":"succeeded","start_time":"2012/02/08 04:02:24"},
+        {"end_time":"2012/02/08 05:02:35","state":"succeeded","start_time":"2012/02/08 05:02:30"},
+        {"end_time":"2012/02/08 06:02:29","state":"succeeded","start_time":"2012/02/08 06:02:26"},
+        {"end_time":"2012/02/08 07:02:34","state":"succeeded","start_time":"2012/02/08 07:02:30"},
+        {"end_time":"2012/02/08 08:02:28","state":"succeeded","start_time":"2012/02/08 08:02:23"},
+        {"end_time":"2012/02/08 09:02:28","state":"succeeded","start_time":"2012/02/08 09:02:25"}],
+        "label":"verthouse/dashboard_rollups/activations"
+      },
+      { "id": 4, "param":{"period":"2001"},
+        "values":[
+        {"end_time":"2012/02/07 10:01:24","state":"succeeded","start_time":"2012/02/07 10:01:21"},
+        {"end_time":"2012/02/07 11:01:33","state":"succeeded","start_time":"2012/02/07 11:01:29"},
+        {"end_time":"2012/02/07 12:01:33","state":"succeeded","start_time":"2012/02/07 12:01:30"},
+        {"end_time":"2012/02/07 13:01:35","state":"succeeded","start_time":"2012/02/07 13:01:32"},
+        {"end_time":"2012/02/07 14:01:32","state":"succeeded","start_time":"2012/02/07 14:01:29"},
+        {"end_time":"2012/02/07 15:01:33","state":"succeeded","start_time":"2012/02/07 15:01:29"},
+        {"end_time":"2012/02/07 16:01:39","state":"succeeded","start_time":"2012/02/07 16:01:35"},
+        {"end_time":"2012/02/07 17:01:32","state":"succeeded","start_time":"2012/02/07 17:01:29"},
+        {"end_time":"2012/02/07 18:01:38","state":"succeeded","start_time":"2012/02/07 18:01:31"},
+        {"end_time":"2012/02/07 19:01:50","state":"succeeded","start_time":"2012/02/07 19:01:35"},
+        {"end_time":"2012/02/07 20:01:37","state":"succeeded","start_time":"2012/02/07 20:01:29"},
+        {"end_time":"2012/02/07 21:01:36","state":"succeeded","start_time":"2012/02/07 21:01:32"},
+        {"end_time":"2012/02/07 22:01:37","state":"succeeded","start_time":"2012/02/07 22:01:33"}],
+        "label":"verthouse/dashboard_rollups/client_engagements"
+      }
+    ];
+    
+    var startX = new Date("2012/02/07 10:00:00")
+      , endX = new Date("2012/02/08 09:03:00")
+      , width = 1000
+      , leftMargin = 10
+      , rightMargin = 10
+      , topMargin = 10
+      , bottomMargin = 10
+      , barHeight = 10;
+    
+    var gantt_chart = new GanttChart("#chart-div", data, {
+        width: width
+      , topMargin: topMargin
+      , leftMargin: leftMargin
+      , rightMargin: rightMargin
+      , barHeight: barHeight
+      , startX: startX
+      , endX: endX
+      , xTransform: function(d){ return new Date(d); }
+      , xScale: d3.time.scale().domain([startX, endX]).range([0, width - leftMargin - rightMargin])
+      // , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc']) //use fill function to style each series based on id
+      , useTipsy: true
+    });
+      
+    </script>
