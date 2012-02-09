@@ -29,6 +29,9 @@ var SparkBar = Chart.extend({
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
     this.drawBaseline = this.drawBaseline || false;
     
+    this.addLinks = this.addLinks || false;
+    this.linkPrefix = this.linkPrefix || 'http://data.int.yammer.com/';
+    
     // Set up rules, axis, ticks
     this.useTipsy = this.useTipsy || false;
     this.formatter = this.formatter || ".2f";
@@ -59,11 +62,11 @@ var SparkBar = Chart.extend({
     // Bars extend vertically in SparkBar
     if(self.baseline === 'top') {
       this.vScale = this.vScale || d3.scale.linear()
-        .domain([(self.min < 0 ? self.min : 0), self.max])
+        .domain([0, self.max])
         .range([self.topMargin, self.height - self.topMargin - self.bottomMargin]);
     } else {
       this.vScale = this.vScale || d3.scale.linear()
-        .domain([(self.min < 0 ? self.min : 0), self.max])
+        .domain([0, self.max])
         .range([self.height - self.topMargin - self.bottomMargin, self.bottomMargin]);
     }
     
@@ -78,7 +81,11 @@ var SparkBar = Chart.extend({
     
     // Draw chart
     $.each(this.values, function(key, values) {
-      self.addBar(key, values);
+      if(self.addLinks) {
+        self.addBarWithLink(key, values);
+      } else{
+        self.addBar(key, values);
+      }
     })
     
     // Draw Baseline
@@ -103,6 +110,33 @@ var SparkBar = Chart.extend({
         }
       });
     }
+  }
+  
+  , addBarWithLink: function(key, values) {
+    self = this;
+        
+    var ahrefs = this.g.selectAll("a.bar-href")
+        .data(values)
+      .enter().append("a")
+        .attr("xlink:href", function(d){ return self.linkPrefix + d.xlink; })
+        .attr("class", "bar_href");
+    
+    ahrefs.append("svg:rect")
+        .data(values)
+        .attr("class", function(d){ return "series_" + key + " " + d.state; })
+        .attr("y", function(d) { 
+          if(self.baseline === 'top') { return self.vScale( self.stacked? d.y0 : 0); }
+          else { return self.vScale( self.stacked? (d.y0+d.y) : d.y ); }
+        })
+        .attr("x", function(d, i) { 
+          return (self.stacked? 0 : parseInt(key) * self.barWidth) + i * ((self.stacked ? 1 : self.series.length)*self.barWidth + self.space); 
+        })
+        .attr("width", self.barWidth)
+        .attr("height", function(d) { 
+          if(self.baseline === 'top') { return self.vScale(d.y) + self.topMargin; }
+          else { return self.vScale(0) - self.vScale(d.y) + self.bottomMargin; }
+        })
+        .attr("fill", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : null; });
   }
   
   , addBar: function(key, values) {
