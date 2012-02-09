@@ -17,7 +17,7 @@ var data = [
     {"end_time":"2012/02/07 22:02:30","state":"succeeded","start_time":"2012/02/07 22:02:27"},
     {"end_time":"2012/02/07 23:02:28","state":"succeeded","start_time":"2012/02/07 23:02:25"},
     {"end_time":"2012/02/08 00:02:36","state":"succeeded","start_time":"2012/02/08 00:02:29"},
-    {"end_time":"2012/02/08 01:02:29","state":"succeeded","start_time":"2012/02/08 01:02:26"},
+    {"end_time":"2012/02/08 01:02:29","state":"failed","start_time":"2012/02/08 01:02:26"},
     {"end_time":"2012/02/08 02:02:28","state":"succeeded","start_time":"2012/02/08 02:02:25"},
     {"end_time":"2012/02/08 03:02:25","state":"succeeded","start_time":"2012/02/08 03:02:22"},
     {"end_time":"2012/02/08 04:02:27","state":"succeeded","start_time":"2012/02/08 04:02:24"},
@@ -25,7 +25,7 @@ var data = [
     {"end_time":"2012/02/08 06:02:30","state":"succeeded","start_time":"2012/02/08 06:02:27"},
     {"end_time":"2012/02/08 07:02:34","state":"succeeded","start_time":"2012/02/08 07:02:29"},
     {"end_time":"2012/02/08 08:02:22","state":"succeeded","start_time":"2012/02/08 08:02:19"},
-    {"end_time":"2012/02/08 09:02:28","state":"succeeded","start_time":"2012/02/08 09:02:25"}],
+    {"end_time":"2012/02/08 09:02:28","state":"running","start_time":"2012/02/08 09:02:25"}],
     "label":"verthouse/dashboard_rollups/activations"
   },
   {"id":3, "param":{"period":"2007"},
@@ -37,7 +37,7 @@ var data = [
     {"end_time":"2012/02/07 21:02:33","state":"succeeded","start_time":"2012/02/07 21:02:26"},
     {"end_time":"2012/02/07 22:02:39","state":"succeeded","start_time":"2012/02/07 22:02:31"},
     {"end_time":"2012/02/07 23:02:31","state":"succeeded","start_time":"2012/02/07 23:02:27"},
-    {"end_time":"2012/02/08 00:02:33","state":"succeeded","start_time":"2012/02/08 00:02:27"},
+    {"end_time":"2012/02/08 00:02:33","state":"failed","start_time":"2012/02/08 00:02:27"},
     {"end_time":"2012/02/08 01:02:28","state":"succeeded","start_time":"2012/02/08 01:02:24"},
     {"end_time":"2012/02/08 02:02:31","state":"succeeded","start_time":"2012/02/08 02:02:27"},
     {"end_time":"2012/02/08 03:02:29","state":"succeeded","start_time":"2012/02/08 03:02:26"},
@@ -46,7 +46,7 @@ var data = [
     {"end_time":"2012/02/08 06:02:29","state":"succeeded","start_time":"2012/02/08 06:02:26"},
     {"end_time":"2012/02/08 07:02:34","state":"succeeded","start_time":"2012/02/08 07:02:30"},
     {"end_time":"2012/02/08 08:02:28","state":"succeeded","start_time":"2012/02/08 08:02:23"},
-    {"end_time":"2012/02/08 09:02:28","state":"succeeded","start_time":"2012/02/08 09:02:25"}],
+    {"end_time":"2012/02/08 09:02:28","state":"running","start_time":"2012/02/08 09:02:25"}],
     "label":"verthouse/dashboard_rollups/activations"
   },
   { "id": 4, "param":{"period":"2001"},
@@ -55,9 +55,9 @@ var data = [
     {"end_time":"2012/02/07 11:01:33","state":"succeeded","start_time":"2012/02/07 11:01:29"},
     {"end_time":"2012/02/07 12:01:33","state":"succeeded","start_time":"2012/02/07 12:01:30"},
     {"end_time":"2012/02/07 13:01:35","state":"succeeded","start_time":"2012/02/07 13:01:32"},
-    {"end_time":"2012/02/07 14:01:32","state":"succeeded","start_time":"2012/02/07 14:01:29"},
-    {"end_time":"2012/02/07 15:01:33","state":"succeeded","start_time":"2012/02/07 15:01:29"},
-    {"end_time":"2012/02/07 16:01:39","state":"succeeded","start_time":"2012/02/07 16:01:35"},
+    {"end_time":"2012/02/07 14:01:32","state":"failed","start_time":"2012/02/07 14:01:29"},
+    {"end_time":"2012/02/07 15:01:33","state":"failed","start_time":"2012/02/07 15:01:29"},
+    {"end_time":"2012/02/07 16:01:39","state":"failed","start_time":"2012/02/07 16:01:35"},
     {"end_time":"2012/02/07 17:01:32","state":"succeeded","start_time":"2012/02/07 17:01:29"},
     {"end_time":"2012/02/07 18:01:38","state":"succeeded","start_time":"2012/02/07 18:01:31"},
     {"end_time":"2012/02/07 19:01:50","state":"succeeded","start_time":"2012/02/07 19:01:35"},
@@ -90,8 +90,7 @@ var GanttChart = Chart.extend({
     
     this.vis = d3.select(selector)
         .append("svg:svg")
-        .attr("class", "gantt_chart")
-        .attr("transform", "translate(" + this.leftMargin + ", " + this.topMargin + ")");
+        .attr("class", "gantt_chart");
     
     // Draw bar series
     $.each(data, function(key, value){
@@ -108,6 +107,9 @@ var GanttChart = Chart.extend({
         }
       });
     })
+    
+    // TODO: Draw baseline
+    
   }
   
   , addSeries: function(key, value){
@@ -117,8 +119,9 @@ var GanttChart = Chart.extend({
     var g = this.vis
         .append("svg:g")
         .attr("class", "series " + value.id)
-        .attr("transform", "translate(0, "+ (parseInt(key) * (this.topMargin + this.barHeight + this.bottomMargin)) +")");
+        .attr("transform", "translate(0, "+ (this.topMargin + parseInt(key) * (this.barHeight + this.bottomMargin)) +")");
     
+    // Draw bars
     g.selectAll("rect.series")
         .data(value.values)
       .enter().append("svg:rect")
@@ -126,10 +129,18 @@ var GanttChart = Chart.extend({
         .attr("x", function(d, i){ return self.xScale(self.xTransform(d.start_time)); })
         .attr("y", 0)
         .attr("width", function(d, i){
-          return self.xScale(self.xTransform(d.end_time)) - self.xScale(self.xTransform(d.start_time)) + 5;
+          return self.xScale(self.xTransform(d.end_time)) - self.xScale(self.xTransform(d.start_time)) + 8;
         })
         .attr("height", this.barHeight)
         .attr("fill", this.fill && this.fill(value.id) || "none");
+    
+    // Draw labels
+    g.append("rect:text")
+        .data(value.label)
+        .attr("class", "title")
+        // .attr("x", )
+        // .attr("y", )
+        .attr("text-anchor", "end")
   }
 
 });
