@@ -81,27 +81,41 @@ var GanttChart = Chart.extend({
     this.topMargin = this.topMargin || 10;
     this.bottomMargin = this.bottomMargin || 10;
     this.barHeight = this.barHeight || 20;
-    this.height = this.height || data.length * (this.bottomMargin + this.barHeight) + this.topMargin + 20;
+    this.height = this.height || data.length * (this.bottomMargin + this.barHeight) + this.topMargin + 100;
     this.formatter = this.formatter || ".2f";
+    this.xNumTicks = this.xNumTicks || 24;
     
     // TODO: find out the xScale in case it's not specified
     // this.startX = this.startX || ...;
     // this.endX = this.endX || ...;
     // this.xScale = this.xScale || ;
     
+    this.hover_idx = -1;
+    
     this.vis = d3.select(selector)
         .append("svg:svg")
         .attr("class", "gantt_chart")
         .attr("width", this.width)
         .attr("height", this.height);
-    
+        
     // Draw bar series
     $.each(data, function(key, value){
       self.addSeries(key, value);
     })
     
-    // TODO: Draw baseline
+    // Draw top axis with ticks
+    this.topAxis = this.topAxis || d3.svg.axis().scale(this.xScale).ticks(this.xNumTicks).orient('bottom');
+    this.vis.append("svg:g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(" + this.leftMargin + ", " + this.topMargin/2 + ")")
+        .call(this.topAxis);
     
+    // Draw bottom axis with ticks
+    this.bottomAxis = this.bottomAxis || d3.svg.axis().scale(this.xScale).ticks(this.xNumTicks).orient('top');
+    this.vis.append("svg:g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(" + this.leftMargin + ", " + (this.height - 2) + ")")
+        .call(this.bottomAxis);
     
     // Tipsy style mouseover
     $(selector+' rect.series').tipsy({
@@ -136,8 +150,35 @@ var GanttChart = Chart.extend({
           return self.xScale(self.xTransform(d.end_time)) - self.xScale(self.xTransform(d.start_time)) + 8;
         })
         .attr("height", this.barHeight)
-        .attr("fill", this.fill && this.fill(value.id) || "none");
-  
+        .attr("fill", this.fill && this.fill(value.id) || "none")
+        .on("mouseover", function(d, i){ return self.mouseover(value.id, i); })
+        .on("mouseout",  function(d, i){ return self.mouseout(value.id, i); });
+    
+    // Highlight Execution start and end times on mouseover
+    g.selectAll("line.start")
+       .data(value.values)
+     .enter().append("svg:line")
+       .attr("transform", "translate(0, -" + (this.topMargin + parseInt(key) * (this.barHeight)) +")")
+       .attr("class", "highlight")
+       .attr("id", function(d, i){ return "start" + value.id + "_" + i; })
+       .attr("x1", function(d, i){ return self.xScale(self.xTransform(d.start_time)); })
+       .attr("x2", function(d, i){ return self.xScale(self.xTransform(d.start_time)); })
+       .attr("y1", this.topMargin / 2)
+       .attr("y2", this.height - 2)
+       .attr("stroke", "none");
+
+    g.selectAll("line.end")
+       .data(value.values)
+     .enter().append("svg:line")
+       .attr("transform", "translate(0, -" + (this.topMargin + parseInt(key) * (this.barHeight)) +")")
+       .attr("class", "highlight")
+       .attr("id", function(d, i){ return "end" + value.id + "_" + i; })
+       .attr("x1", function(d, i){ return self.xScale(self.xTransform(d.end_time)) + 8 })
+       .attr("x2", function(d, i){ return self.xScale(self.xTransform(d.end_time)) + 8 })
+       .attr("y1", this.topMargin / 2)
+       .attr("y2", this.height - 2)
+       .attr("stroke", "none");
+    
     // Draw baseline
     g.append("svg:line")
         .attr("class", "baseline")
@@ -152,35 +193,42 @@ var GanttChart = Chart.extend({
         .attr("class", "labels")
         .attr("transform", "translate(0, " + (this.topMargin + parseInt(key) * this.barHeight) + ")");
     
-    lcontainer.append("svg:rect")
-        .attr("class", "label-containter")
-        .attr("width", this.leftMargin)
-        .attr("height", 50)
-        .attr("fill", "none");
-    
+    // construct <text><a><tspan></tspan></a>
     var label = lcontainer.append("svg:text")
         .attr("class", "title")
         .attr("transform", "translate(0, " + this.topMargin/2 + ")")
         .attr("text-anchor", "start");
-    
     label.append("a")
         .attr("xlink:href", function(){ return "#"; });
-    
     label.selectAll("a")
         .append("svg:tspan")
-        .text(function(){ return value.label; })
+        .text(function(){ return value.label; });
+  }
+  
+  // Hover over bar to highlight start and end
+  , mouseover: function(key, i) {
+    var self = this;
+    this.hover_idx = i;
     
-    // spit out project, group, and job
-    // label.selectAll("a")
-    //   .data(value.label.split('/'))
-    //     .enter().append("a")
-    //     .attr("xlink:href", function(){ return "http://data.int.yammer.com" });
-    // label.selectAll("a")
-    //     .append("svg:tspan")
-    //     .attr("class", "label")
-    //     .attr("x", 0)
-    //     .attr("y", function(d, i){ return i>0? i+"em" : 0; })
-    //     .text(function(d){ return d; });
+    this.vis.select("line#start" + key + "_" + i)
+      .attr("stroke", "#666");
+      
+    this.vis.select("line#end" + key + "_" + i)
+      .attr("stroke", "#666");
+  }
+  
+  // And hide highlight lines when mouseout
+  , mouseout: function(key, i) {
+    var self = this;
+    this.hover_idx = i;
+    
+    this.vis.select("line#start" + key + "_" + i)
+      .attr("stroke", "none");
+      
+    this.vis.select("line#end" + key + "_" + i)
+      .attr("stroke", "none");
+    
+    this.hover_idx = -1;
   }
 
 });

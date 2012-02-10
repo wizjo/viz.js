@@ -99,13 +99,14 @@
       , endX = new Date("2012/02/08 09:03:00")
       , width = 1200
       , leftMargin = 200
-      , rightMargin = 30
+      , rightMargin = 50
       , topMargin = 50
       , bottomMargin = 0
-      , barHeight = 50;
+      , barHeight = 35;
     
     var gantt_chart = new GanttChart("#chart-div", data, {
         width: width
+      , height: data.length * (bottomMargin + barHeight) + topMargin + 30
       , topMargin: topMargin
       , bottomMargin: bottomMargin
       , leftMargin: leftMargin
@@ -113,10 +114,16 @@
       , barHeight: barHeight
       , startX: startX
       , endX: endX
+      , xNumTicks: 16
       , xTransform: function(d){ return new Date(d); }
-      , xScale: d3.time.scale().domain([startX, endX]).range([leftMargin, width - rightMargin])
+      , xScale: d3.time.scale().domain([startX, endX]).range([0, width - leftMargin - rightMargin])
       // , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc']) //use fill function to style each series based on id
       , useTipsy: true
+      , label: function(d){ 
+        return "Started at: " + d.start_time + "UTC <br />" + 
+          "Ended at: " + d.end_time + "UTC <br />" + 
+          "duration: " + d3.format(".2f")((new Date(d.end_time) - new Date(d.start_time)) / 1000) + " sec" 
+      }
     });
       
     </script>
