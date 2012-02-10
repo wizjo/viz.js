@@ -119,7 +119,7 @@ var SparkBar = Chart.extend({
         .data(values)
       .enter().append("a")
         .attr("xlink:href", function(d){ return self.linkPrefix + d.xlink; })
-        .attr("class", "bar_href");
+        .attr("class", "bar-href");
     
     ahrefs.append("svg:rect")
         .data(values)
