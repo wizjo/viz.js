@@ -54,7 +54,6 @@ line.rule_first { stroke: #333; stroke-width: 1px; }
 .gantt_chart rect.succeeded { stroke: none; fill: #6EAB37; }
 .gantt_chart rect.running { stroke:none; fill: #F3D03E; }
 .gantt_chart rect.failed { stroke: none; fill: #D14124; }
-.gantt_chart rect:hover { stroke: #999; stroke-width: 2px; }
 .gantt_chart line.baseline { stroke: #aeaeae; stroke-width: 1px; }
 .gantt_chart text.title{ fill: #300; font-size: .85em; }
 .gantt_chart text.title a tspan { fill: #356596; }

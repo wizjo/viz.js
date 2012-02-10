@@ -119,13 +119,11 @@ var GanttChart = Chart.extend({
     
     // Tipsy style mouseover
     $(selector+' rect.series').tipsy({
-      gravity: 'sw',
+      gravity: 'e',
       html: true,
       title: function() {
         var d = this.__data__;
-        var duration = (self.xTransform(d.end_time) - self.xTransform(d.start_time)) / 1000;
-        return self.label && self.label(d) || 
-          "Started at: " + d.start_time + "UTC <br />duration: " + d3.format(self.formatter)(duration) + " sec"; 
+        return d.label || (self.label && self.label(d)) || null; 
       }
     });
   }
@@ -139,10 +137,14 @@ var GanttChart = Chart.extend({
         .attr("class", "series " + value.id)
         .attr("transform", "translate(" + this.leftMargin + ", " + (this.topMargin + parseInt(key) * (this.barHeight)) +")");
     
-    // Draw bars
-    g.selectAll("rect.series")
+    // Draw bars with links: <a><rect></rect></a>
+    var ahrefs = g.selectAll("a.bar-href")
         .data(value.values)
-      .enter().append("svg:rect")
+      .enter().append("a")
+        .attr("xlink:href", function(d){ return d.tipLink; })
+        .attr("class", "bar-href");
+    
+    ahrefs.append("svg:rect")
         .attr("class", function(d, i){ return "series " + d.state; })
         .attr("x", function(d, i){ return self.xScale(self.xTransform(d.start_time)); })
         .attr("y", 0)
@@ -199,7 +201,7 @@ var GanttChart = Chart.extend({
         .attr("transform", "translate(0, " + this.topMargin/2 + ")")
         .attr("text-anchor", "start");
     label.append("a")
-        .attr("xlink:href", function(){ return "#"; });
+        .attr("xlink:href", value.titleLink);
     label.selectAll("a")
         .append("svg:tspan")
         .text(function(){ return value.label; });
@@ -207,24 +209,22 @@ var GanttChart = Chart.extend({
   
   // Hover over bar to highlight start and end
   , mouseover: function(key, i) {
-    var self = this;
     this.hover_idx = i;
     
     this.vis.select("line#start" + key + "_" + i)
       .attr("stroke", "#666");
-      
     this.vis.select("line#end" + key + "_" + i)
       .attr("stroke", "#666");
+    
+    this.hover_idx = -1;
   }
   
   // And hide highlight lines when mouseout
   , mouseout: function(key, i) {
-    var self = this;
     this.hover_idx = i;
     
     this.vis.select("line#start" + key + "_" + i)
       .attr("stroke", "none");
-      
     this.vis.select("line#end" + key + "_" + i)
       .attr("stroke", "none");
     
