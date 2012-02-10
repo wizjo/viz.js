@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title id="viz-title">Rectangle Chart</title>
+    <link type="text/css" rel="stylesheet" href="stylesheets/example.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/tipsy.css">
+    
+    <!-- jquery -->
+    <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery.tipsy.js"></script>
+    
+    <script type="text/javascript" src="../raphael.js"></script>
+
+    <!-- include your local d3 library instead -->
+    <script type="text/javascript" src="../lib/d3/d3.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.chart.js"></script>
+    
+    <!-- visualizie base classes -->
+    <script type="text/javascript" src="../class.js"></script>
+    <script type="text/javascript" src="../chart.js"></script>
+    <script type="text/javascript" src="rectangle_chart.js"></script>
+  </head>
+  <body>
+    <div id="rectangle" style="width:300px; height:300px;"></div>
+    <script type="text/javascript">
+      var data = {consumers: 1, contributors: 0.75, likers: 0.25}
+      var width = 280,
+          height = 165;
+      
+      var concentric_bottom = new RectangleChart("#rectangle", data, {
+          width: width
+        , height: height
+        , margin: 10
+      });
+    </script>
+  </body>
+</html>
