@@ -84,6 +84,7 @@ var GanttChart = Chart.extend({
     this.height = this.height || data.length * (this.bottomMargin + this.barHeight) + this.topMargin + 100;
     this.formatter = this.formatter || ".2f";
     this.xNumTicks = this.xNumTicks || 24;
+    this.rowBackground = this.rowBackground || "#666";
     
     // TODO: find out the xScale in case it's not specified
     // this.startX = this.startX || ...;
@@ -136,6 +137,16 @@ var GanttChart = Chart.extend({
         .append("svg:g")
         .attr("class", "series " + value.id)
         .attr("transform", "translate(" + this.leftMargin + ", " + (this.topMargin + parseInt(key) * (this.barHeight)) +")");
+    
+    g.append("svg:rect")
+        .attr("class", "row")
+        .attr("id", "row-" + key)
+        .attr("x", -this.leftMargin)
+        .attr("y", 0)
+        .attr("width", this.width)
+        .attr("height", this.barHeight)
+        .attr("fill", key%2 == 0? this.rowBackground : "none")
+        .attr("fill-opacity", 0.2);
     
     // Draw bars with links: <a><rect></rect></a>
     var ahrefs = g.selectAll("a.bar-href")
