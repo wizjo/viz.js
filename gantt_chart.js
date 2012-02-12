@@ -143,7 +143,7 @@ var GanttChart = Chart.extend({
         .attr("id", "row-" + key)
         .attr("x", -this.leftMargin)
         .attr("y", 0)
-        .attr("width", this.width - this.rigthMargin)
+        .attr("width", this.width - this.rightMargin)
         .attr("height", this.barHeight)
         .attr("fill", key%2 == 0? this.rowBackground : "none")
         .attr("fill-opacity", 0.2);
