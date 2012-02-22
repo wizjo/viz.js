@@ -96,7 +96,7 @@ var ColumnChart = Chart.extend({
       this.g.selectAll("line.rule")
           .data(function() {
             var rules = self.vScale.ticks(self.numRules);
-            return $.map(rules, function(value, idx){ if(idx < rules.length - 1) { return [value] } });
+            return rules.slice(0,self.numRules);
           })
         .enter().append("svg:line")
           .attr("class", function(d, i){ return i>0? "rule" : "rule_first"})
