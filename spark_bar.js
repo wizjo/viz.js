@@ -30,7 +30,6 @@ var SparkBar = Chart.extend({
     this.drawBaseline = this.drawBaseline || false;
     
     this.addLinks = this.addLinks || false;
-    this.linkPrefix = this.linkPrefix || 'http://data.int.yammer.com/';
     
     // Set up rules, axis, ticks
     this.useTipsy = this.useTipsy || false;
@@ -118,7 +117,7 @@ var SparkBar = Chart.extend({
     var ahrefs = this.g.selectAll("a.bar-href")
         .data(values)
       .enter().append("a")
-        .attr("xlink:href", function(d){ return self.linkPrefix + d.xlink; })
+        .attr("xlink:href", function(d){ return (self.linkPrefix || '') + d.xlink; })
         .attr("class", "bar-href");
     
     ahrefs.append("svg:rect")
