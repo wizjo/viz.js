@@ -27,6 +27,7 @@ var ForceDirected = Chart.extend({
     
     this.nodeFill = this.nodeFill || d3.scale.category20b();
     this.edgeColor = this.edgeColor || d3.scale.category20b();
+    this.edgeType = this.edgeType || 'bezier';
     
     this.vis = d3.select(selector)
         .append("svg:svg")
@@ -45,10 +46,35 @@ var ForceDirected = Chart.extend({
     
     this.links = this.vis.selectAll("link")
         .data(data.links);
+    
     this.nodes = this.vis.selectAll("g.node")
         .data(data.nodes);
     
     this.drawNodesLinks();
+  }
+  
+  , drawEdge: function(d) {
+    switch(this.edgeType){
+      case 'bezier': // Bezier Curve
+        return "M"+d.source.x+","+d.source.y
+               + " Q"+(d.source.x+d.target.x)/2+","+(d.source.size >= d.target.size ? d.source.y+10:d.target.y-10)
+               + " "+d.target.x+","+d.target.y;
+        break;
+      case 'arc': // Quadratic Arc
+        return "M "+d.source.x+","+d.source.y 
+               + " A"+d.target.x+","+d.target.y
+               + " 0 "+ (d.source.size>=d.target.size? "0,0":"0,1")
+               + d.target.x+","+d.target.y;
+        break;
+      case 'straight':
+        return "M "+d.source.x+" "+d.source.y+" L "+d.target.x+" "+d.target.y;
+        break;
+      default:
+        return "M"+d.source.x+","+d.source.y
+               + " Q"+(d.source.x+d.target.x)/2+","+(d.source.size >= d.target.size ? d.source.y+10:d.target.y-10)
+               + " "+d.target.x+","+d.target.y;
+        break;
+    }
   }
   
   , drawNodesLinks: function() {
@@ -56,16 +82,11 @@ var ForceDirected = Chart.extend({
     /* edges first. so that it won't float atop circles. */
     this.links
       .enter().append("svg:path")
+        .attr("d", function(d){ return self.drawEdge(d); })
         .attr("stroke-width", function(d){ return self.width_s(d.value); })
         .attr("stroke", function(d){ return self.edgeColor(d); })
         .attr("stroke-opacity", 0.6)
-        .attr("fill", "none")
-        .attr("d", function(d) {
-          // TODO: Making edge type an option
-          return "M"+d.source.x+","+d.source.y
-                 + " Q"+(d.source.x+d.target.x)/2+","+(d.source.size >= d.target.size ? d.source.y+10:d.target.y-10)
-                 + " "+d.target.x+","+d.target.y; 
-        });
+        .attr("fill", "none");
 
     /* abstract nodes. to further appened visual attributes. */
     this.nodes
@@ -101,11 +122,7 @@ var ForceDirected = Chart.extend({
     // Drag behavior
     // TODO: making edge type an option
     this.force.on("tick", function() {
-      self.links.attr("d", function(d) {
-        return "M"+d.source.x+","+d.source.y
-               + " Q"+(d.source.x+d.target.x)/2+","+(d.source.size >= d.target.size ? d.source.y+10:d.target.y-10)
-               + " "+d.target.x+","+d.target.y;
-      });
+      self.links.attr("d", function(d){ return self.drawEdge(d); });
       self.nodes.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
     });
   }
