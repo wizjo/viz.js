@@ -29,15 +29,15 @@ var ForceDirected = Chart.extend({
     this.edgeColor = this.edgeColor || d3.scale.category20b();
     
     this.vis = d3.select(selector)
-        .attr("class", "force_directed")
         .append("svg:svg")
+        .attr("class", "force_directed")
         .attr("width", this.width)
         .attr("height", this.height);
     
     this.force = d3.layout.force()
         .gravity(.8)
         .charge(-200)
-        .distance(d3.min([this.width, this.height]) / 2)
+        .distance(d3.max([this.width, this.height]) / 2)
         .nodes(data.nodes)
         .links(data.links)
         .size([this.width - this.leftMargin - this.rightMargin, this.height - this.topMargin - this.bottomMargin])
