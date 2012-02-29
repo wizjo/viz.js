@@ -28,6 +28,7 @@ var ForceDirected = Chart.extend({
     this.nodeFill = this.nodeFill || d3.scale.category20b();
     this.edgeColor = this.edgeColor || d3.scale.category20b();
     this.edgeType = this.edgeType || 'bezier';
+    this.directed = this.directed || false;
     
     this.vis = d3.select(selector)
         .append("svg:svg")
@@ -49,6 +50,13 @@ var ForceDirected = Chart.extend({
     
     this.nodes = this.vis.selectAll("g.node")
         .data(data.nodes);
+    
+    this.markers = this.directed? 
+      this.vis.append("svg:defs")
+          .selectAll("marker")
+          .data(data.links) : null;
+    
+    if(this.directed){ this.drawMarkers(); }
     
     this.drawNodesLinks();
   }
@@ -77,6 +85,21 @@ var ForceDirected = Chart.extend({
     }
   }
   
+  , drawMarkers: function() {
+    self = this;
+    this.markers
+      .enter().append("svg:marker")
+        .attr("id", function(d, i) { return "arrow-"+i; })
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", function(d) { return self.width_s(d.value); })
+        .attr("refY", 0)
+        .attr("orient", "auto")
+        .attr("fill", function(d) { return self.nodeFill(d.source); })
+        .attr("fill-opacity", 0.6)
+      .append("svg:path")
+        .attr("d", "M0,-5L10,0L0,5 Z");
+  }
+  
   , drawNodesLinks: function() {
     self = this;
     /* edges first. so that it won't float atop circles. */
@@ -86,7 +109,8 @@ var ForceDirected = Chart.extend({
         .attr("stroke-width", function(d){ return self.width_s(d.value); })
         .attr("stroke", function(d){ return self.edgeColor(d); })
         .attr("stroke-opacity", 0.6)
-        .attr("fill", "none");
+        .attr("fill", "none")
+        .attr("marker-end", function(d, i){ return self.directed? "url(#arrow-"+i+")" : "none"; });
 
     /* abstract nodes. to further appened visual attributes. */
     this.nodes
