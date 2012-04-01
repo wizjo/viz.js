@@ -64,3 +64,7 @@ line.rule_first { stroke: #333; stroke-width: 1px; }
 /* styles for force-directed graph */
 .force_directed text.name { fill: #666; font: 16px Helvetica Neue, Arial; text-anchor: middle; dy: 0.3em; }
 .force_directed text.value { fill: none; font: 16px Helvetica Neue, Arial; text-anchor: middle; dy: 0.3em; }
+
+
+/* styles for FilledSeries */
+.filled_series circle:hover{ stroke: #999; stroke-width: 2px; }
