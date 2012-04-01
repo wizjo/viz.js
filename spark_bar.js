@@ -24,6 +24,7 @@ var SparkBar = Chart.extend({
     this.topMargin = this.topMargin || 5;
     this.bottomMargin = this.bottomMargin || 5;
     this.barWidth = this.barWidth || 5; // sets the width of each bar
+    this.minBarHeight = this.minBarHeight || 10;
     
     this.baseline = this.baseline || "bottom"; // available values: "top", "bottom"
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
@@ -62,11 +63,11 @@ var SparkBar = Chart.extend({
     if(self.baseline === 'top') {
       this.vScale = this.vScale || d3.scale.linear()
         .domain([0, self.max])
-        .range([self.topMargin, self.height - self.topMargin - self.bottomMargin]);
+        .range([self.topMargin, self.height - self.topMargin - self.bottomMargin - self.minBarHeight]);
     } else {
       this.vScale = this.vScale || d3.scale.linear()
         .domain([0, self.max])
-        .range([self.height - self.topMargin - self.bottomMargin, self.bottomMargin]);
+        .range([self.height - self.topMargin - self.bottomMargin - self.minBarHeight, self.bottomMargin]);
     }
     
     this.vis = d3.select(selector)
@@ -76,7 +77,7 @@ var SparkBar = Chart.extend({
         .attr("height", this.height);
     
     this.g = this.vis.append("svg:g")
-        .attr("transform", "translate(" + (this.yaxis_position === 'left'? this.yAxisMargin+this.leftMargin : this.leftMargin) + ", "+ this.topMargin + ")");
+        .attr("transform", "translate(" + (this.yaxis_position === 'left'? this.yAxisMargin+this.leftMargin : this.leftMargin) + ", "+ this.minBarHeight + ")");
     
     // Draw chart
     $.each(this.values, function(key, values) {
@@ -132,8 +133,8 @@ var SparkBar = Chart.extend({
         })
         .attr("width", self.barWidth)
         .attr("height", function(d) { 
-          if(self.baseline === 'top') { return self.vScale(d.y) + self.topMargin; }
-          else { return self.vScale(0) - self.vScale(d.y) + self.bottomMargin; }
+          if(self.baseline === 'top') { return self.vScale(d.y) + self.minBarHeight; }
+          else { return self.vScale(0) - self.vScale(d.y) + self.minBarHeight; }
         })
         .attr("fill", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : null; });
   }
@@ -153,8 +154,8 @@ var SparkBar = Chart.extend({
         })
         .attr("width", self.barWidth)
         .attr("height", function(d) { 
-          if(self.baseline === 'top') { return self.vScale(d.y) + self.topMargin; }
-          else { return self.vScale(0) - self.vScale(d.y) + self.bottomMargin; }
+          if(self.baseline === 'top') { return self.vScale(d.y) + self.minBarHeight; }
+          else { return self.vScale(0) - self.vScale(d.y) + self.minBarHeight; }
         })
         .attr("fill", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : "none" });
   }

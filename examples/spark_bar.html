@@ -25,18 +25,19 @@
     <div class="chart" id="chart-div" style="width:300px; height:200px;"></div>
     <script type="text/javascript">
       var data = {
-        series1: [
+        series: [
           {time_id: "2012-02-01 00:05:00", y: 125.38, state: "succeeded"},
           {time_id: "2012-02-01 01:05:00", y: 119.23, state: "succeeded"},
           {time_id: "2012-02-01 02:05:00", y: 108.65, state: "failed"},
           {time_id: "2012-02-01 03:05:00", y: 108.65, state: "failed"},
           {time_id: "2012-02-01 04:05:00", y: 108.65, state: "failed"},
           {time_id: "2012-02-01 05:05:00", y: 108.65, state: "failed"},
-          {time_id: "2012-02-01 06:05:00", y: 67.12, state: "running"} ]
+          {time_id: "2012-02-01 06:05:00", y: 0, state: "running"} ]
       };
       
       var chart = new SparkBar("#chart-div", data, {
           height: 80
+        , minBarHeight: 10
         , leftMargin: 5 // give it a larger leftMargin when you want the y-axis to be on the left-hand side
         , rightMargin: 5
         , topMargin: 5
@@ -48,7 +49,7 @@
         , barWidth: 10
         // , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc']) //comment out this line if you wanna style bars at a series level in css
         , useTipsy: true
-       });
+      });
     </script>
   </body>
 </html>
