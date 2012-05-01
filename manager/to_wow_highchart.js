@@ -15,7 +15,7 @@ VizJs.toWowHighChart = function(data, column) {
       if(idx - weeks[i]*7*24 >= 0){ data.push([time_id, values[idx - weeks[i]*7*24]]) }
     })
     
-    series.push( {name: (i==0? "current": i + " week" + (i>=1? "s":"") + " ago"), data: data} );
+    series.push( {name: (i==0? "current": i + " week" + (i>1? "s":"") + " ago"), data: data} );
   }
   
   return series;
