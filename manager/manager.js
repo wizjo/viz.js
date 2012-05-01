@@ -1,0 +1,1 @@
+var VizJs = VizJs || {};
