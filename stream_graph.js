@@ -45,6 +45,16 @@ var StreamGraph = Chart.extend({
     // stream_data will change when layout options get updated
     this.stream_data = d3.layout.stack().offset(this.offset).order(this.order)(this.series);
     
+    // this is a hack for encoding the most fuck'ed up one with the reddest color
+    this.aggregates = $.map(this.stream_data, function(d, i){
+      var total = 0;
+      $.each(d, function(k, v){
+        total += v.y
+      })
+      return total;
+    })
+    this.max_aggregates = d3.max(this.aggregates)
+    
     this.mx = this.stream_data[0].length - 1;
     this.my = d3.max(this.stream_data, function(d){
       return d3.max(d, function(d){
@@ -89,7 +99,7 @@ var StreamGraph = Chart.extend({
       .data(this.stream_data)
     .enter().append("svg:path")
       .attr("d", this.area)
-      .attr("fill", function(d, i){ return self.fill(i/self.stream_data.length); })
+      .attr("fill", function(d, i){ return self.fill(self.aggregates[i] / self.max_aggregates); })
       .attr("fill-opacity", .7)
       .attr("stroke", "#EEE")
       .on("mouseover", function(d, i){ return self.mouseover(d, i) })
