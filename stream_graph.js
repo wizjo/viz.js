@@ -105,16 +105,22 @@ var StreamGraph = Chart.extend({
     this.vis.selectAll("text")
       .attr("fill", "none");
     this.vis.selectAll("path")
-      .attr("fill-opacity", "none")
+      .attr("fill-opacity", .7)
       .attr("stroke", "#EEE")
       .attr("stroke-width", 1);
   }
 
   , transition: function(offset, order){
     var self = this;
-    var d1 = this.stream_data;
-    var stream_data = d3.layout.stack().offset(offset).order(order)(this.series);
-    console.log(d1 == stream_data);
+    
+    // Update stream_data, mx, my based on new layout
+    this.stream_data = d3.layout.stack().offset(offset).order(order)(this.series);    
+    this.mx = this.stream_data[0].length - 1;
+    this.my = d3.max(this.stream_data, function(d){
+      return d3.max(d, function(d){
+        return d.y0 + d.y;
+      })
+    }) * 1.02;
     
     this.vis.selectAll("path")
     .transition()

@@ -23,7 +23,12 @@
   </head>
   <body>
     <h1>Exceptions Streamgraph</h1>
-    <div id="streamgraph-1min" style="border:3px solid #CCC; width:1200px; height:200px; margin-bottom:30px;"></div>
+    <div style="margin-bottom:30px;">
+      <div id="streamgraph-1min" style="align:left; border:3px solid #CCC; width:1200px; height:200px;"></div>
+      <button id="update" onclick="streamgraph_1min.transition(['zero','silhouette'][Math.floor(Math.random() * 2)], ['default','inside-out'][Math.floor(Math.random() * 2)])">
+        Change Layout
+      </button>(check me out!)
+    </div>
     <div id="streamgraph-10min" style="border:3px solid #CCC; width:1200px; height:200px; margin-bottom:30px;"></div>
     <div id="streamgraph-30min" style="border:3px solid #CCC; width:1200px; height:200px; margin-bottom:30px;"></div>
     
