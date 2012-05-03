@@ -71,11 +71,14 @@ var StreamGraph = Chart.extend({
     
     // Tipsy style labels
     $(selector+' svg path').tipsy({
-      gravity: 'w', 
+      gravity: 'sw',
+      html: true,
       title: function(){ 
         var d = this.__data__; 
         var i = $.inArray(d, self.stream_data);
-        return self.label_names[i];
+        var total = 0;
+        $.each(d, function(){ total += this.y; })
+        return  self.label_names[i] + "<br />" + "Total Exceptions: " + total;
       }
     });
   }
