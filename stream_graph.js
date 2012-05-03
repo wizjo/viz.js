@@ -31,6 +31,13 @@ var StreamGraph = Chart.extend({
     this.order = this.order || "inside-out"; //"inside-out" - sort by index of maximum value, "reverse", "default"
     this.line_interpolate = this.line_interpolate || "linear";
     
+    // timestamps
+    this.start_time = this.start_time || (new Date().valueOf() - 24*3600000);
+    this.interval = this.interval || 60000;
+    
+    this.label_names = $.map(data, function(d, i){
+      return d.label;
+    });
     this.series = $.map(data, function(d, i){
       return [ $.map(d.vector, function(d, i){ return {x:i, y:d} }) ]
     });
@@ -46,13 +53,6 @@ var StreamGraph = Chart.extend({
     }) * 1.02;
     this.hover_idx = -1;
     
-    this.area = d3.svg.area()
-      .x(function(d, i) { return i * self.width / self.mx; })
-      .y0(function(d) { return self.height - d.y0 * self.height / self.my; })
-      .y1(function(d) { return self.height - (d.y + d.y0) * self.height / self.my; })
-      .tension(0.65)
-      .interpolate(this.line_interpolate);
-    
     /* #chart div, paint streamgraph */
     this.vis = d3.select(selector)
     .append("svg:svg")
@@ -60,6 +60,28 @@ var StreamGraph = Chart.extend({
       .attr("width", this.width)
       .attr("height", this.height);
     
+    this.area = d3.svg.area()
+      .x(function(d, i) { return i * self.width / self.mx; })
+      .y0(function(d) { return self.height - d.y0 * self.height / self.my; })
+      .y1(function(d) { return self.height - (d.y + d.y0) * self.height / self.my; })
+      .tension(0.65)
+      .interpolate(this.line_interpolate);
+    
+    this.render();
+    
+    // Tipsy style labels
+    $(selector+' svg path').tipsy({
+      gravity: 'w', 
+      title: function(){ 
+        var d = this.__data__; 
+        var i = $.inArray(d, self.stream_data);
+        return self.label_names[i];
+      }
+    });
+  }
+  
+  , render: function(){
+    var self = this;
     this.streams = this.vis.selectAll("path")
       .data(this.stream_data)
     .enter().append("svg:path")
@@ -69,35 +91,48 @@ var StreamGraph = Chart.extend({
       .attr("stroke", "#EEE")
       .on("mouseover", function(d, i){ return self.mouseover(d, i) })
       .on("mouseout", function(d, i){ return self.mouseout(d, i) });
-
-    this.labels = this.vis.selectAll("text")
-      .data(this.stream_data)
-    .enter().append("svg:text")
-      .attr("text-anchor", "middle")
-      .attr("x", 0.5 * this.width)
-      .attr("y", 0.5 * this.height)
-      .attr("dy", ".3em")
-      .attr("fill", function(d, i){ return self.fill(i/self.stream_data.length); })
-      // .attr("fill", "none")
-      .text(function(d, i) { return data[i].label; });
     
     // Vertical gridlines to show timestamps
-    this.gridlines = this.vis.selectAll()
-      .append("svg:g")
-      .attr("id", "gridlines");
+    this.grids = this.vis.selectAll("line")
+      .data(this.stream_data[0])
+    .enter().append("svg:line")
+      .attr("class", "grid")
+      .attr("x1", function(d, i){ return i * self.width / self.mx; })
+      .attr("x2", function(d, i){ return i * self.width / self.mx; })
+      .attr("y1", 0)
+      .attr("y2", this.height)
+      .attr("stroke", "none");
+    
+    // Place labels for each series
+    this.labels = this.vis.selectAll("text")
+      .data(this.label_names)
+    .enter().append("svg:text")
+      .attr("text-anchor", "middle")
+      .attr("x", function(d, i){
+        var j = Math.floor(self.stream_data[0].length / 2) + i*(i%2>0? -1 : 1);
+        return j * self.width / self.mx;
+      })
+      .attr("y", function(d, i){
+        var j = Math.floor(self.stream_data[0].length / 2) + i*(i%2>0? -1 : 1);
+        var v = self.stream_data[i][j];
+        return self.height - v.y0 * self.height / self.my;
+      })
+      .attr("fill", "#666")
+      // .attr("fill", "none")
+      .text(function(d, i) { return self.label_names[i]; });
   }
 
   , mouseover: function(d, i){
     var self = this;
     this.hover_idx = i;
     this.labels
-      .attr("fill", function(d, i){
-        return self.hover_idx == i? self.fill(i/self.stream_data.length) : "none";
-      });
+      .attr("fill", "none");
+    
     this.vis.selectAll("path")
       .attr("fill-opacity", function(d, i) { return self.hover_idx==i? 1:0.1; })
-      .attr("stroke", function(d, i) { return self.hover_idx==i? "#666":"none"; })
-      .attr("stroke-width", 2);
+      .attr("stroke", function(d, i) { return self.hover_idx==i? "#F64941":"none"; });
+    
+    this.grids.attr("stroke", "#E3E3E3");
   }
 
   , mouseout: function(){
@@ -108,14 +143,15 @@ var StreamGraph = Chart.extend({
       .attr("fill-opacity", .7)
       .attr("stroke", "#EEE")
       .attr("stroke-width", 1);
+    this.grids.attr("stroke", "none");
+    this.labels.attr("fill", "#666");
   }
 
   , transition: function(offset, order){
     var self = this;
     
-    // Update stream_data, mx, my based on new layout
+    // Update stream_data, my based on new layout
     this.stream_data = d3.layout.stack().offset(offset).order(order)(this.series);    
-    this.mx = this.stream_data[0].length - 1;
     this.my = d3.max(this.stream_data, function(d){
       return d3.max(d, function(d){
         return d.y0 + d.y;

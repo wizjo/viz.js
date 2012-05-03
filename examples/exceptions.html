@@ -36,34 +36,37 @@
       var streamgraph_1min = new StreamGraph("#streamgraph-1min", exceptions, {
           width: 1200
         , height: 200
-        , fill: d3.interpolateRgb("#0092BC", "#DEDEDE")
+        , fill: d3.interpolateRgb("#0092BC", "#CA3A46")
         , formatter: ".2f"
         , offset: "silhouette"
         , order: "inside-out"
         , line_interpolate: "cardinal"
-        , start_time: new Date().valueOf() //In reality this should be a the start time of your series
+        , start_time: new Date().valueOf() - 24*3600000 //In reality this should be a the start time of your series
+        , interval: 60000
       });
       
       var streamgraph_10min = new StreamGraph("#streamgraph-10min", exceptions, {
           width: 1200
         , height: 200
-        , fill: d3.interpolateRgb("#0092BC", "#DEDEDE")
+        , fill: d3.interpolateRgb("#0092BC", "#CA3A46")
         , formatter: ".2f"
         , offset: "zero"
         , order: "reverse"
         , line_interpolate: "step-after"
-        , start_time: new Date().valueOf()
+        , start_time: new Date().valueOf() - 24*3600000
+        , interval: 600000
       });
       
       var streamgraph_30min = new StreamGraph("#streamgraph-30min", exceptions, {
           width: 1200
         , height: 200
-        , fill: d3.interpolateRgb("#0092BC", "#DEDEDE")
+        , fill: d3.interpolateRgb("#0092BC", "#CA3A46")
         , formatter: ".2f"
         , offset: "expand"
         , order: "default"
         , line_interpolate: "monotone"
-        , start_time: new Date().valueOf()
+        , start_time: new Date().valueOf() - 24*3600000
+        , interval: 1800000
       });
     </script>
   </body>
