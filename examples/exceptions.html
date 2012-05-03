@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link type="text/css" rel="stylesheet" href="stylesheets/example.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/tipsy.css">
+    
+    <!-- jquery -->
+    <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery-ui-1.8.17.custom.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery.tipsy.js"></script>
+    
+    <!-- include your local d3 library instead -->
+    <script type="text/javascript" src="../lib/d3/d3.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.layout.js"></script>
+    <script type="text/javascript" src="../lib/d3/d3.chart.js"></script>
+    
+    <!-- visualizie base classes -->
+    <script type="text/javascript" src="../class.js"></script>
+    <script type="text/javascript" src="../chart.js"></script>
+    <script type="text/javascript" src="../stream_graph.js"></script>
+    <script type="text/javascript" src="datasets/exception_data.js"></script>
+  </head>
+  <body>
+    <h1>Exceptions Streamgraph</h1>
+    <div id="streamgraph-1min" style="border:3px solid #CCC; width:1200px; height:200px; margin-bottom:30px;"></div>
+    <div id="streamgraph-10min" style="border:3px solid #CCC; width:1200px; height:200px; margin-bottom:30px;"></div>
+    <div id="streamgraph-30min" style="border:3px solid #CCC; width:1200px; height:200px; margin-bottom:30px;"></div>
+    
+    <script type="text/javascript">
+      var streamgraph_1min = new StreamGraph("#streamgraph-1min", exceptions, {
+          width: 1200
+        , height: 200
+        , fill: d3.interpolateRgb("#0092BC", "#DEDEDE")
+        , formatter: ".2f"
+        , offset: "silhouette"
+        , order: "inside-out"
+        , line_interpolate: "cardinal"
+        , start_time: new Date().valueOf() //In reality this should be a the start time of your series
+      });
+      
+      var streamgraph_10min = new StreamGraph("#streamgraph-10min", exceptions, {
+          width: 1200
+        , height: 200
+        , fill: d3.interpolateRgb("#0092BC", "#DEDEDE")
+        , formatter: ".2f"
+        , offset: "zero"
+        , order: "reverse"
+        , line_interpolate: "step-after"
+        , start_time: new Date().valueOf()
+      });
+      
+      var streamgraph_30min = new StreamGraph("#streamgraph-30min", exceptions, {
+          width: 1200
+        , height: 200
+        , fill: d3.interpolateRgb("#0092BC", "#DEDEDE")
+        , formatter: ".2f"
+        , offset: "expand"
+        , order: "default"
+        , line_interpolate: "monotone"
+        , start_time: new Date().valueOf()
+      });
+    </script>
+  </body>
+</html>
