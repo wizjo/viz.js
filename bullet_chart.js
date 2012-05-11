@@ -15,6 +15,8 @@ var BulletChart = Chart.extend({
     this._super(selector, options);
     var self = this;
     
+    this.selector = selector;
+    
     this.width = this.width || 500;
     this.height = this.height || 45;
     this.leftMargin = this.leftMargin || 100;
@@ -36,6 +38,7 @@ var BulletChart = Chart.extend({
         .data(data)
       .enter().append("svg:svg")
         .attr("class", "bullet")
+        .attr("id", function(d, i){ return "chart-" + i })
         .attr("width", this.width)
         .attr("height", this.height)
       .append("svg:g")
@@ -46,27 +49,6 @@ var BulletChart = Chart.extend({
         .attr("text-anchor", "end");
         
     this.hover_idx = -1;
-    
-    // Hover over bulletchart to view metric value
-    function mouseover(d, i) {
-      self.hover_idx = i;
-      d3.select(selector).selectAll("text.tip")
-        .attr("fill", function(d, i) { return self.hover_idx==i? self.hover_label_color : "none"; });
-      d3.select(selector).selectAll("rect.measure")
-        .attr("stroke", function(d, i) { return self.hover_idx==i? "#FFF" : "none"; })
-        .attr("stroke-width", "2px");
-      self.hover_idx = -1;
-    }
-    
-    // And hide this value metric again when mouseout
-    function mouseout(d, i) {
-      self.hover_idx = i;
-      d3.select(selector).selectAll("text.tip")
-        .attr("fill", "none");
-      d3.select(selector).selectAll("rect.measure")
-        .attr("stroke", "none")
-      self.hover_idx = -1;
-    }
     
     if(this.title) {
       this.addTitle();
@@ -79,8 +61,8 @@ var BulletChart = Chart.extend({
     if(this.hover_events) {
       this.addChartTips();
       this.vis
-          .on("mouseover", mouseover)
-          .on("mouseout", mouseout);
+          .on("mouseover", function(d, i){ return self.mouseover(d, i) })
+          .on("mouseout",  function(d, i){ return self.mouseout(d, i) });
     }
   }
   
@@ -110,6 +92,29 @@ var BulletChart = Chart.extend({
         })
         .text(function(d) { return d.measures[0]; })
         .attr("fill", "none");
+  }
+  
+  // Hover over bulletchart to view metric value
+  , mouseover: function(d, i) {
+    var self = this;
+    this.hover_idx = i;
+    d3.select(this.selector).selectAll("text.tip")
+      .attr("fill", function(d, i) { return self.hover_idx==i? self.hover_label_color : "none"; });
+    d3.select(this.selector).selectAll("rect.measure")
+      .attr("stroke", function(d, i) { return self.hover_idx==i? "#FFF" : "none"; })
+      .attr("stroke-width", "2px");
+    this.hover_idx = -1;
+  }
+  
+  // And hide this value metric again when mouseout
+  , mouseout: function(d, i) {
+    var self = this;
+    this.hover_idx = i;
+    d3.select(this.selector).selectAll("text.tip")
+      .attr("fill", "none");
+    d3.select(this.selector).selectAll("rect.measure")
+      .attr("stroke", "none")
+    this.hover_idx = -1;
   }
   
 });
