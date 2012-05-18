@@ -36,10 +36,10 @@ var StreamGraph = Chart.extend({
     this.interval = this.interval || 60000;
     
     this.label_names = $.map(data, function(d, i){
-      return d.label;
+      return d["label"];
     });
     this.series = $.map(data, function(d, i){
-      return [ $.map(d.vector, function(d, i){ return {x:i, y:d} }) ]
+      return [ $.map(d["vector"], function(d, i){ return {x:i, y:d} }) ]
     });
     
     // stream_data will change when layout options get updated
@@ -130,8 +130,7 @@ var StreamGraph = Chart.extend({
         var v = self.stream_data[i][j];
         return self.height - v.y0 * self.height / self.my;
       })
-      .attr("fill", "#666")
-      // .attr("fill", "none")
+      .attr("fill", "none")
       .text(function(d, i) { return self.label_names[i]; });
   }
 
@@ -157,14 +156,14 @@ var StreamGraph = Chart.extend({
       .attr("stroke", "#EEE")
       .attr("stroke-width", 1);
     this.grids.attr("stroke", "none");
-    this.labels.attr("fill", "#666");
+    this.labels.attr("fill", "none");
   }
 
   , transition: function(offset, order){
     var self = this;
     
     // Update stream_data, my based on new layout
-    this.stream_data = d3.layout.stack().offset(offset).order(order)(this.series);    
+    this.stream_data = d3.layout.stack().offset(offset).order(order)(this.series);
     this.my = d3.max(this.stream_data, function(d){
       return d3.max(d, function(d){
         return d.y0 + d.y;

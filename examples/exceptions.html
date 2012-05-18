@@ -25,7 +25,7 @@
     <h1>Exceptions Streamgraph</h1>
     <div style="margin-bottom:30px;">
       <div id="streamgraph-1min" style="align:left; border:3px solid #CCC; width:1200px; height:200px;"></div>
-      <button id="update" onclick="streamgraph_1min.transition(['zero','silhouette'][Math.floor(Math.random() * 2)], ['default','inside-out'][Math.floor(Math.random() * 2)])">
+      <button id="update" onclick="change_layout()">
         Change Layout
       </button>(check me out!)
     </div>
@@ -33,6 +33,15 @@
     <div id="streamgraph-30min" style="border:3px solid #CCC; width:1200px; height:200px; margin-bottom:30px;"></div>
     
     <script type="text/javascript">
+      offset_idx = 0;
+      order_idx = 0;
+      var options = { offset: ['zero','silhouette'], order: ['default','inside-out'] };
+      var change_layout = function(){
+        streamgraph_1min.transition(options.offset[offset_idx % 2], options.order[order_idx % 2]);
+        offset_idx ++;
+        order_idx ++;
+      }
+      
       var streamgraph_1min = new StreamGraph("#streamgraph-1min", exceptions, {
           width: 1200
         , height: 200
