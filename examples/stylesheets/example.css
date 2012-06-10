@@ -1,8 +1,12 @@
 /* general page styles */
 body { font: 14px Helvetica Neue, Arial; color: #666; }
 .chart { margin: 40px 20px; border: 3px solid #CCC; width: 800px; height: 500px; padding:5px; background: #FFF; }
-h1 { margin-left: 300px; font-size: 2em; font-weight: normal; }
-h2 { margin: 30px auto 10px 30px; font-size: 1.3em; font-weight: normal; }
+.clip { float:left; display: inline; margin-bottom: 40px; }
+.clip-wrapper { float:left; margin: 5px 40px auto 20px; width: 200px; height: 200px; position: relative; }
+.clip-wrapper a img{ position: absolute; clip: rect(3 200px 200px 3); left:0; bottom: 0; top: 0; right: 0; border: 3px solid #CCC; }
+.clip-wrapper a:hover img { border: 3px solid #77c5d5; }
+h1 { text-align: center; font-size: 2em; font-weight: normal; }
+h2 { text-align: center; font-size: 1.3em; font-weight: normal; }
 
 /* general styles for axes, rules and ticks in LineChart, ColumnChart, and BarChart */
 g.axis { fill: #666; font-size: 12px; }

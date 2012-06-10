@@ -12,10 +12,7 @@
     <script type="text/javascript" src="../lib/jquery/jquery.tipsy.js"></script>
     
     <!-- d3 library -->
-    <script type="text/javascript" src="../lib/d3/d3.js"></script>
-    <script type="text/javascript" src="../lib/d3/d3.layout.js"></script>
-    <script type="text/javascript" src="../lib/d3/d3.chart.js"></script>
-    <script type="text/javascript" src="../lib/d3/d3.time.js"></script>
+    <script type="text/javascript" src="../lib/d3.v2.min.js"></script>
     
     <!-- visualizie base classes -->
     <script type="text/javascript" src="../class.js"></script>
@@ -69,7 +66,7 @@
         , xLineTransform: function(n) { return new Date(time_ids[n]); }
         , x: d3.time.scale().domain([startX, endX]).range([0 + xLeftMargin, width - xLeftMargin - xRightMargin])
         , fill: d3.scale.ordinal().range(['#77c5d5', '#ed8b00', '#78be20', '#f3d03e', '#d14124', '#0092bc'])
-        , xNumTicks: 16
+        , xNumTicks: 10
         , yNumTicks: 11
         , rightAxis: d3.svg.axis().scale(
             d3.scale.linear().domain([0, 100]).range([height - yMargin, 0 + yMargin])
