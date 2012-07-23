@@ -14,4 +14,5 @@
 //= require viz/spark_bar
 //= require viz/spark_line
 //= require viz/stream_graph
+//= require viz/funnel_column_chart
 //
