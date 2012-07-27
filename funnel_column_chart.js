@@ -38,30 +38,29 @@ var FunnelColumnChart = Chart.extend({
     this.unit = this.percent ? "%" : "";
     this.lineStrokeColor = this.lineStrokeColor || "#EBEBEB";
     this.lineStrokeWidth = this.lineStrokeWidth || 1.5;
-
-    this.steps = data.values["Steps"] || [];
-    this.benchmark = data.values["Benchmark"] || [];
+    
+    this.benchmarkFill = this.benchmarkFill || "#AA4643";
 
     // Reformat data for charting (and labeling)
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
-    this.values = d3.layout.stack()($.map(data.values, function(values, key){ return [values]; }));
-    
+    data.values = d3.layout.stack()($.map(data.values, function(values, key){ return [values]; }));
 
-    this.arrowHeight = 35 * (this.steps[1].content.length+1);
+    this.arrowHeight = 35 * (data.values[0][1].content.length+1);
     this.arrowWidth = self.barWidth + this.space/2;
+
 
     // Override width based on spacing between bars and width of bar/arrows
     this.bottomMargin = this.arrowHeight + this.bottomMargin || this.arrowHeight;
-    this.width = this.steps.length * (this.barWidth + self.space) + this.leftMargin + this.rightMargin + this.yAxisMargin;
+    this.width = data.values[0].length * (this.barWidth + self.space) + this.leftMargin + this.rightMargin + this.yAxisMargin;
     
-    this.max = this.max || d3.max($.map(this.values, function(values, key){ 
+    this.max = this.max || d3.max($.map(data.values, function(values, key){ 
       return d3.max($.map(values, 
-        function(values){ return values.y; 
+        function(values){ return self.stacked? (values.y0 + values.y) : values.y; 
       })) 
     }));
-    this.min = this.min || d3.min($.map(this.values, function(values, key){ 
+    this.min = this.min || d3.min($.map(data.values, function(values, key){ 
       return d3.min($.map(values, 
-        function(values){ return values.y; 
+        function(values){ return self.stacked? (values.y0 + values.y) : values.y; 
       })) 
     }));
     
@@ -112,32 +111,15 @@ var FunnelColumnChart = Chart.extend({
     }
 
     // Draw chart
-    self.addBar("Steps", this.steps);
-    self.addBar("Benchmark", this.benchmark);
+    $.each(data.values, function(key, values) {
+      self.addBar(key, values);
+    })
 
     // Add Y Axis
     if(this.yaxis_position !== 'none') {
       this.g.append("svg:g")
           .attr("class", "y axis")
           .call(this.yAxis);
-    }
-    
-    // Add labels against baseline
-    if(this.show_labels) {
-      this.g.selectAll("")
-          .data(data.labels)
-        .enter().append("svg:rect")
-          .attr("x", function(d, i) { 
-            return (self.stacked? 0 : parseInt(key) * self.barWidth) + i * ((self.stacked ? 1 : self.series.length)*self.barWidth + self.space); 
-          })
-          .attr("y", this.height - this.topMargin  - this.bottomMargin)
-          .attr("text-anchor", "end")
-          .attr("transform", function(d, i){
-            return "translate(" + ((self.stacked? 0.55 : 1.05) * self.barWidth) + ", " + (self.label_position=="vertical"? 5: 8) + ")" 
-              + "rotate(" + (self.label_position == 'vertical'? "-90" : "-45")
-              + " " + ((self.stacked? 0 : parseInt(key) * self.barWidth) + i * ((self.stacked ? 1 : self.series.length)*self.barWidth + self.space))
-              + " " + (self.height - self.topMargin  - self.bottomMargin) + ")";
-          });
     }
     
     if(this.useTipsy) {
@@ -156,81 +138,115 @@ var FunnelColumnChart = Chart.extend({
     var groups = this.g.selectAll("rect." + "series_" + key).data(values)
       .enter().append("svg:g");
 
-    if(key === "Benchmark") {
-
-    }
-    else{
-      var bars = groups.append("svg:rect")
-        .attr("class", function() { return "series_" + key; })
-        .attr("y", function(d, idx) { 
-          var first = values[0].y;
-          return self.vScale( first ); 
+    //makes bars
+    var bars = groups.append("svg:rect")
+      .attr("class", function() { return "series_" + key; })
+      .attr("x", function(d, i) {return i*self.barWidth + (i+1)*self.space})
+      .attr("width", self.barWidth)
+      .attr("fill", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : "none" })
+      .attr("height", function(d, idx) {
+        var first = values[0].y; 
+        return self.vScale(0) - self.vScale(first); 
+      })
+      .transition().duration(function(d, idx) {
+          return idx * 250;
         })
-        .attr("x", function(d, i) {return i*self.barWidth + (i+1)*self.space})
-        .attr("width", self.barWidth)
-        .attr("fill", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : "none" })
-        .attr("height", function(d, idx) {
-          var first = values[0].y; 
-          return self.vScale(0) - self.vScale(first); 
+      .attr("height", function(d, idx) { 
+        return self.vScale(0) - self.vScale(d.y); 
+      })
+      .attr("y", function(d) { 
+        return self.vScale( self.stacked? (d.y0+d.y) : d.y ); 
+      });
+      
+      //makes benchmarks
+    var benchmarks = groups.append("svg:line")
+      .attr("x1", function(d, i) {return (i+.5)*self.barWidth + (i+1)*self.space})
+      .attr("x2", function(d, i) {return (i+.5)*self.barWidth + (i+1)*self.space})
+      .attr("y1", function(d) { 
+        return self.vScale( d.benchmark ); 
+      })
+      .attr("y2", function(d) { 
+        return self.vScale( d.benchmark ); 
+      })
+      .attr("stroke", self.benchmarkFill)
+      .attr("stroke-width", 2)
+      .transition().duration(function(d, idx) {
+        return (idx+1) * 250;
+      })
+      .attr("x1", function(d, i) {return (i+0.25)*self.barWidth + (i+1)*self.space})
+      .attr("x2", function(d, i) {return (i+0.75)*self.barWidth + (i+1)*self.space});
+
+    groups.append("svg:path")
+      .attr("d", function(d, i) {
+        var x = (i+0.5)*self.barWidth + (i+1)*self.space;
+        var y = self.vScale( d.benchmark );
+        return "m" + (x-5) + " " + y + " l5 5 l5 -5 l-5 -5 Z";
+      })
+      .attr("fill", self.benchmarkFill)
+      .attr("opacity", 0.0)
+      .transition().duration(function(d, idx) {
+        return idx * 250;
+      })
+      .attr("opacity", 1.0);
+
+      //makes arrows
+      var x_indent = self.space/2;
+      var y_indent = this.arrowHeight/(values[1].content.length + 2);
+      var arrow_extend = "-" + self.space/3 + " -" + self.space/3;
+
+      var arrowGroups = groups.append("svg:g").attr("transform", function(d,i) {
+        var x = i*self.barWidth + (i+1)*self.space;
+        var y = self.vScale(d.y0) + 25;
+        return "translate(" + x + ", " + y + ")";
+      });
+
+      arrowGroups.attr("opacity", 0.0)
+      .transition().duration(function(d, idx) {
+        return idx * 350;
+      })
+      .attr("opacity", 1.0);
+
+
+      arrowGroups.append("svg:path")
+        .attr("d", function(d, i) {
+          var p = "m"  + arrow_extend + " h" + self.arrowWidth + "l" + self.space/2 + " " 
+            + self.arrowHeight/2 + "  l-" + self.space/2 + " " + self.arrowHeight/2 + "  h-" + self.arrowWidth;
+          if(i === 0) //if first arrow, cutoff end
+            return p += "L" + arrow_extend + " Z";
+          else if(i === values.length - 1) //if last
+            return "m" + arrow_extend + " h" + (self.arrowWidth + self.space/2) + "v" + self.arrowHeight +  " h-" + (self.arrowWidth + self.space/2)
+              + " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z" ;
+          return p += " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z"; //if any other, make arrow
         })
-        .transition().duration(function(d, idx) {
-            return idx * 250;
-          })
-        .attr("height", function(d, idx) { 
-          return self.vScale(0) - self.vScale(d.y); 
-        })
-        .attr("y", function(d) { 
-          return self.vScale( d.y ); 
-        });
-        
+        .attr("stroke", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : "none" })
+        .attr("stroke-width", 3)
+        .attr("fill", "#EDF7FF");
 
-        //makes arrows
-        var x_indent = self.space/2;
-        var y_indent = this.arrowHeight/(values[1].content.length + 2);
-        var arrow_extend = "-" + self.space/3 + " -" + self.space/3;
+      var text = arrowGroups.append("svg:text").attr("y", y_indent);
+      
+      text.append("svg:tspan")
+        .attr("x", x_indent)
+        .attr("font-weight", "bold")
+        .attr("font-size", 13)
+        .text(function(d) { return d.title;});
 
-        var arrowGroups = groups.append("svg:g").attr("transform", function(d,i) {
-          var x = i*self.barWidth + (i+1)*self.space;
-          var y = self.vScale(d.y0) + 25;
-          return "translate(" + x + ", " + y + ")";
-        });
+      text.selectAll("text").data(function(d) { return d.content}).enter().append("svg:tspan")
+        .attr("x", x_indent)
+        .attr("dy", 19)
+        .attr("font-size", 13)
+        .text(function(s) {return s });
 
-        arrowGroups.attr("opacity", 0.0)
-        .transition().duration(function(d, idx) {
-          return idx * 350;
-        })
-        .attr("opacity", 1.0);
+      // groups.on("mouseover", function(d, i) {
+      //   $(this).children().each(function(idx, obj) {
+      //     obj.style.fill = "#deadbeef";
+      //   });
+      // });
 
-
-        arrowGroups.append("svg:path")
-          .attr("d", function(d, i) {
-            var p = "m"  + arrow_extend + " h" + self.arrowWidth + "l" + self.space/2 + " " 
-              + self.arrowHeight/2 + "  l-" + self.space/2 + " " + self.arrowHeight/2 + "  h-" + self.arrowWidth;
-            if(i === 0) //if first arrow, cutoff end
-              return p += "L" + arrow_extend + " Z";
-            else if(i === values.length - 1) //if last
-              return "m" + arrow_extend + " h" + (self.arrowWidth + self.space/2) + "v" + self.arrowHeight +  " h-" + (self.arrowWidth + self.space/2)
-                + " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z" ;
-            return p += " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z"; //if any other, make arrow
-          })
-          .attr("stroke", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : "none" })
-          .attr("stroke-width", 3)
-          .attr("fill", "#EDF7FF");
-
-        var text = arrowGroups.append("svg:text").attr("y", y_indent);
-        
-        text.append("svg:tspan")
-          .attr("x", x_indent)
-          .attr("font-weight", "bold")
-          .attr("font-size", 13)
-          .text(function(d) { return d.title;});
-
-        text.selectAll("text").data(function(d) { return d.content}).enter().append("svg:tspan")
-          .attr("x", x_indent)
-          .attr("dy", 19)
-          .attr("font-size", 13)
-          .text(function(s) {return s });
-    }
+      // groups.on("mouseout", function(d, i) {
+      //   $(this).children().each(function(idx, obj) {
+      //     obj.style.fill = self.fill;
+      //   });
+      // });
     
   }
 });
