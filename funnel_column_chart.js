@@ -38,15 +38,20 @@ var FunnelColumnChart = Chart.extend({
     this.unit = this.percent ? "%" : "";
     this.lineStrokeColor = this.lineStrokeColor || "#EBEBEB";
     this.lineStrokeWidth = this.lineStrokeWidth || 1.5;
+
+    this.fill = this.fill || "#77c5d5";
     
     this.benchmarkFill = this.benchmarkFill || "#AA4643";
+
+    this.legend = this.legend || null; 
+    this.legend.position = this.legend.position || "right";
 
     // Reformat data for charting (and labeling)
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
     data.values = d3.layout.stack()($.map(data.values, function(values, key){ return [values]; }));
 
     this.arrowHeight = 35 * (data.values[0][1].content.length+1);
-    this.arrowWidth = self.barWidth + this.space/2;
+    this.arrowWidth = self.barWidth + this.space/2 + 8;
 
 
     // Override width based on spacing between bars and width of bar/arrows
@@ -63,17 +68,12 @@ var FunnelColumnChart = Chart.extend({
         function(values){ return self.stacked? (values.y0 + values.y) : values.y; 
       })) 
     }));
+
+
+    this.vScale = this.vScale || d3.scale.linear()
+      .domain([(self.min < 0 ? self.min : 0), self.max])
+      .range([self.height - self.topMargin - self.bottomMargin, 0]);
     
-    // Bars extend horizontally in BarChart, vertically in ColumnChart
-    if(self.baseline === 'top') {
-      this.vScale = this.vScale || d3.scale.linear()
-        .domain([(self.min < 0 ? self.min : 0), self.max])
-        .range([0, self.height - self.topMargin - self.bottomMargin]);
-    } else {
-      this.vScale = this.vScale || d3.scale.linear()
-        .domain([(self.min < 0 ? self.min : 0), self.max])
-        .range([self.height - self.topMargin - self.bottomMargin, 0]);
-    }
     
     // Define yAxis
     this.yAxis = d3.svg.axis().scale(this.vScale).ticks(this.ynumTicks).tickFormat(
@@ -85,7 +85,32 @@ var FunnelColumnChart = Chart.extend({
           return parseFloat(n.toPrecision(2)).toExponential() + self.unit;
         }
     ).orient(this.yaxis_position);
-    
+
+    console.log(this.yAxis);
+
+
+    //draw legend
+    if(self.legend) {
+      var legend = '<div style="background-color:white;border-color:#EDEDED;border-bottom-width:5px;border-style:solid;padding:12px;float:' + self.legend.position + '"><table>';
+      var benchmarkPath = '<svg style="height:15px"><g><line x1=0 x2=35 y1=5 y2=5 style="stroke:' + self.benchmarkFill + ';stroke-width:2;"></line>'
+      + '<path d="m14 5 l4 4 l4 -4 l-4 -4 Z" style="fill:' + self.benchmarkFill + '"></path></g></svg>'; 
+      legend += '<tr><td style="width:40px">' + benchmarkPath + '</td>';
+      if(self.legend.benchmarkLabel)
+        legend += '<td style="color:' + self.benchmarkFill + '">' + self.legend.benchmarkLabel + '</td>';
+      else 
+        legend += '<td style="color:' + self.benchmarkFill + '">' + self.legend.benchmarkLabel + '</td>';
+      
+
+      legend += '<td style="width:35px"><svg><rect x=15 width=10 height=25 style="fill:' + self.fill + '"></rect></svg></td>' ;
+      if(self.legend.metricLabel) 
+        legend += '<td style="color:' + self.fill + '" >' + self.legend.metricLabel + '</td>';
+      else 
+        legend += '<td style="color:' + self.fill + '" >' + self.name + '</td>';
+      legend += '</tr></table></div>';
+
+      $(selector).append(legend);
+    }
+
     this.vis = d3.select(selector)
         .append("svg:svg")
         .attr("width", this.width)
@@ -93,7 +118,8 @@ var FunnelColumnChart = Chart.extend({
     
     this.g = this.vis.append("svg:g")
         .attr("transform", "translate(" + (this.yaxis_position === 'left'? this.yAxisMargin+this.leftMargin : this.leftMargin) + ", "+ this.topMargin + ")");
-    
+  
+
     // Add rules
     if(this.numRules > 0) {
       this.g.selectAll("line.rule")
@@ -143,7 +169,7 @@ var FunnelColumnChart = Chart.extend({
       .attr("class", function() { return "series_" + key; })
       .attr("x", function(d, i) {return i*self.barWidth + (i+1)*self.space})
       .attr("width", self.barWidth)
-      .attr("fill", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : "none" })
+      .attr("fill", self.fill)
       .attr("height", function(d, idx) {
         var first = values[0].y; 
         return self.vScale(0) - self.vScale(first); 
@@ -218,7 +244,7 @@ var FunnelColumnChart = Chart.extend({
               + " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z" ;
           return p += " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z"; //if any other, make arrow
         })
-        .attr("stroke", function(d, i) { return self.fill? self.fill("bar_" + key + "_" + i) : "none" })
+        .attr("stroke", self.fill)
         .attr("stroke-width", 3)
         .attr("fill", "#EDF7FF");
 
@@ -247,6 +273,7 @@ var FunnelColumnChart = Chart.extend({
       //     obj.style.fill = self.fill;
       //   });
       // });
+
     
   }
 });
