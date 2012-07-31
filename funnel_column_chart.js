@@ -206,7 +206,7 @@ var FunnelColumnChart = Chart.extend({
       .attr("opacity", 1.0);
 
       //makes arrows
-      var x_indent = self.space/2;
+      var x_indent = self.space;
       var y_indent = this.arrowHeight/(values[1].content.length + 2);
       var arrow_extend = "-" + self.space/3 + " -" + self.space/3;
 
@@ -257,10 +257,10 @@ var FunnelColumnChart = Chart.extend({
         $($(this).children()[0]).css("stroke-width", 3);
         $($(this).children()[0]).css("stroke", "#696969");
         
-        var j = i < groups[0].length/2 ? i+1 : i;
+        var j = i > groups[0].length/2 ? i : i+1;
 
         var x = (j)*(self.barWidth) + (j+1)*self.space + self.leftMargin + self.yAxisMargin;
-        if(i > groups[0].length/2) x -= (self.barWidth + 1.5*self.space);
+        if(i > groups[0].length/2) x -= (self.barWidth + 2*self.space);
 
         var y = self.height - self.vScale(d.benchmark) + self.arrowHeight;
         var style = '-webkit-transform:translate(' + x + 'px, -' + y + 'px);width:' + (self.barWidth - self.space/2) + 'px';
