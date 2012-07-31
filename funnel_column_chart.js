@@ -18,8 +18,7 @@ var FunnelColumnChart = Chart.extend({
     this.space = this.space || 20;
     this.leftMargin = this.leftMargin || 5;
     this.rightMargin = this.rightMargin || 10;
-    this.topMargin = this.topMargin || 5;
-    this.barWidth = this.barWidth || 5; // sets the width of each bar
+    this.topMargin = this.topMargin || 5; 
     
     this.baseline = this.baseline || "bottom"; // available values: "top", "bottom"
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
@@ -35,7 +34,7 @@ var FunnelColumnChart = Chart.extend({
     this.useTipsy = this.useTipsy || false;
     this.formatter = this.formatter || ".2f";
 
-    this.unit = this.percent ? "%" : "";
+    this.unit = this.unit || "total";
     this.lineStrokeColor = this.lineStrokeColor || "#EBEBEB";
     this.lineStrokeWidth = this.lineStrokeWidth || 1.5;
 
@@ -50,8 +49,12 @@ var FunnelColumnChart = Chart.extend({
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
     data.values = d3.layout.stack()($.map(data.values, function(values, key){ return [values]; }));
 
-    this.arrowHeight = 35 * (data.values[0][1].content.length+1);
-    this.arrowWidth = self.barWidth + this.space/2 + 8;
+    this.barWidth = $(window).width()/data.values[0].length - 2*this.space;
+    if(this.barWidth < 0) console.log("'space' option is too large for the number of bars given!");
+
+    this.arrowHeight = 20 + 35 * (data.values[0][1].content.length+1);
+
+    this.arrowWidth = self.barWidth + this.space/2;
 
 
     // Override width based on spacing between bars and width of bar/arrows
@@ -73,21 +76,18 @@ var FunnelColumnChart = Chart.extend({
     this.vScale = this.vScale || d3.scale.linear()
       .domain([(self.min < 0 ? self.min : 0), self.max])
       .range([self.height - self.topMargin - self.bottomMargin, 0]);
-    
-    
+
+  
     // Define yAxis
     this.yAxis = d3.svg.axis().scale(this.vScale).ticks(this.ynumTicks).tickFormat(
         function(d) {
           var wholeNumber = d3.format(",0d");
-          if (d == 0) { return 0 + self.unit; }
-          if (d > 1) { return wholeNumber(d) + self.unit; }
-          if (d >= 0.01) { return n.toPrecision(2) + self.unit; }
-          return parseFloat(n.toPrecision(2)).toExponential() + self.unit;
+          if (d == 0) { return 0 + "%"; }
+          if (d > 1) { return wholeNumber(d) + "%"; }
+          if (d >= 0.01) { return n.toPrecision(2) + "%"; }
+          return parseFloat(n.toPrecision(2)).toExponential() + "%";
         }
     ).orient(this.yaxis_position);
-
-    console.log(this.yAxis);
-
 
     //draw legend
     if(self.legend) {
@@ -118,7 +118,7 @@ var FunnelColumnChart = Chart.extend({
     
     this.g = this.vis.append("svg:g")
         .attr("transform", "translate(" + (this.yaxis_position === 'left'? this.yAxisMargin+this.leftMargin : this.leftMargin) + ", "+ this.topMargin + ")");
-  
+
 
     // Add rules
     if(this.numRules > 0) {
@@ -131,14 +131,14 @@ var FunnelColumnChart = Chart.extend({
           .attr("class", function(d, i){ return i>0? "rule" : "rule_first"})
           .attr("y1", this.vScale)
           .attr("y2", this.vScale)
-          .attr("x1", -this.leftMargin)
+          .attr("x1", 0)
           .attr("x2", this.width)
           .attr("style", "stroke-width:" + self.lineStrokeWidth + ";stroke:" + self.lineStrokeColor);
     }
 
     // Draw chart
     $.each(data.values, function(key, values) {
-      self.addBar(key, values);
+      self.addBar(key, values, selector);
     })
 
     // Add Y Axis
@@ -147,19 +147,9 @@ var FunnelColumnChart = Chart.extend({
           .attr("class", "y axis")
           .call(this.yAxis);
     }
-    
-    if(this.useTipsy) {
-      $(selector+' rect').tipsy({
-        gravity: 'sw', 
-        title: function() {
-          var d = this.__data__;
-          return d3.format(self.formatter)(d.y);
-        }
-      });
-    }
   }
   
-  , addBar: function(key, values) {
+  , addBar: function(key, values, selector) {
     self = this;
     var groups = this.g.selectAll("rect." + "series_" + key).data(values)
       .enter().append("svg:g");
@@ -169,7 +159,7 @@ var FunnelColumnChart = Chart.extend({
       .attr("class", function() { return "series_" + key; })
       .attr("x", function(d, i) {return i*self.barWidth + (i+1)*self.space})
       .attr("width", self.barWidth)
-      .attr("fill", self.fill)
+      .style("fill", self.fill)
       .attr("height", function(d, idx) {
         var first = values[0].y; 
         return self.vScale(0) - self.vScale(first); 
@@ -194,7 +184,7 @@ var FunnelColumnChart = Chart.extend({
       .attr("y2", function(d) { 
         return self.vScale( d.benchmark ); 
       })
-      .attr("stroke", self.benchmarkFill)
+      .style("stroke", self.benchmarkFill)
       .attr("stroke-width", 2)
       .transition().duration(function(d, idx) {
         return (idx+1) * 250;
@@ -208,7 +198,7 @@ var FunnelColumnChart = Chart.extend({
         var y = self.vScale( d.benchmark );
         return "m" + (x-5) + " " + y + " l5 5 l5 -5 l-5 -5 Z";
       })
-      .attr("fill", self.benchmarkFill)
+      .style("fill", self.benchmarkFill)
       .attr("opacity", 0.0)
       .transition().duration(function(d, idx) {
         return idx * 250;
@@ -216,7 +206,7 @@ var FunnelColumnChart = Chart.extend({
       .attr("opacity", 1.0);
 
       //makes arrows
-      var x_indent = self.space/2;
+      var x_indent = self.space;
       var y_indent = this.arrowHeight/(values[1].content.length + 2);
       var arrow_extend = "-" + self.space/3 + " -" + self.space/3;
 
@@ -244,36 +234,61 @@ var FunnelColumnChart = Chart.extend({
               + " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z" ;
           return p += " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z"; //if any other, make arrow
         })
-        .attr("stroke", self.fill)
+        .style("stroke", self.fill)
         .attr("stroke-width", 3)
-        .attr("fill", "#EDF7FF");
+        .style("fill", "#EDF7FF");
 
       var text = arrowGroups.append("svg:text").attr("y", y_indent);
       
       text.append("svg:tspan")
         .attr("x", x_indent)
         .attr("font-weight", "bold")
-        .attr("font-size", 13)
+        .attr("font-size", 17)
         .text(function(d) { return d.title;});
 
-      text.selectAll("text").data(function(d) { return d.content}).enter().append("svg:tspan")
+      text.selectAll("text").data(function(d, i) { return i!=0 ? d.content : []}).enter().append("svg:tspan")
         .attr("x", x_indent)
-        .attr("dy", 19)
+        .attr("dy", 25)
         .attr("font-size", 13)
-        .text(function(s) {return s });
+        .text(function(s) {return s + "% of initial"});
 
-      // groups.on("mouseover", function(d, i) {
-      //   $(this).children().each(function(idx, obj) {
-      //     obj.style.fill = "#deadbeef";
-      //   });
-      // });
+      groups.on("mouseover", function(d, i) {
+        $($($(this).children()[3]).children()[0]).css("stroke", "#696969");
+        $($(this).children()[0]).css("stroke-width", 3);
+        $($(this).children()[0]).css("stroke", "#696969");
+        
+        var j = i < groups[0].length/2 ? i+1 : i;
 
-      // groups.on("mouseout", function(d, i) {
-      //   $(this).children().each(function(idx, obj) {
-      //     obj.style.fill = self.fill;
-      //   });
-      // });
+        var x = (j)*(self.barWidth) + (j+1)*self.space + self.leftMargin + self.yAxisMargin;
+        if(i > groups[0].length/2) x -= (self.barWidth + 1.5*self.space);
 
-    
+        var y = self.height - self.vScale(d.benchmark) + self.arrowHeight;
+        var style = '-webkit-transform:translate(' + x + 'px, -' + y + 'px);width:' + (self.barWidth - self.space/2) + 'px';
+
+        var content = '<h3 style="color:black">' + d.title + '</h3><div style="margin-left:20px"><p><h4 style="display:inline">' + d.total + '</h4>  ' + self.unit + '</p>';
+
+        if(i > 0) content += '<p><h4 style="display:inline">' + d.y + '</h4>% of initial ' + self.unit + '</p>'
+          + '<p style="color:' + self.benchmarkFill + ';display:inline"> Was </p> <h4 style="color:' + self.benchmarkFill + ';display:inline">' + d.benchmark 
+          + '%</h4> <p style="color:' + self.benchmarkFill + ';display:inline"> three months ago (benchmark) </p></div>';
+        
+        var tooltip = '<div id="tooltip" style="' + style + '">' + content + '</div>';  
+        $(selector).append(tooltip);
+
+        if(i > groups[0].length/2) {
+          $("#tooltip").addClass("afterarrow");
+        } else {
+          $("#tooltip").addClass("beforearrow")
+        }
+
+
+      });
+
+      groups.on("mouseout", function(d, i) {
+        $($($(this).children()[3]).children()[0]).css("stroke", self.fill);
+        $($(this).children()[0]).css("stroke-width", 0);
+        $($(this).children()[0]).css("stroke", "none");
+        $("#tooltip").remove();
+      }); 
   }
+
 });
