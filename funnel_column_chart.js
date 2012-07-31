@@ -206,7 +206,7 @@ var FunnelColumnChart = Chart.extend({
       .attr("opacity", 1.0);
 
       //makes arrows
-      var x_indent = self.space;
+      var x_indent = self.space/2;
       var y_indent = this.arrowHeight/(values[1].content.length + 2);
       var arrow_extend = "-" + self.space/3 + " -" + self.space/3;
 
@@ -243,7 +243,7 @@ var FunnelColumnChart = Chart.extend({
       text.append("svg:tspan")
         .attr("x", x_indent)
         .attr("font-weight", "bold")
-        .attr("font-size", 17)
+        .attr("font-size", 15)
         .text(function(d) { return d.title;});
 
       text.selectAll("text").data(function(d, i) { return i!=0 ? d.content : []}).enter().append("svg:tspan")
