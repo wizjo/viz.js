@@ -22,6 +22,8 @@ var FunnelColumnChart = Chart.extend({
     
     this.baseline = this.baseline || "bottom"; // available values: "top", "bottom"
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
+
+    this.benchmarkTime = this.benchmarkTime || "";
     
     // Set up rules, axis, ticks
     this.numRules = this.numRules || 1; // number of rules to add, first rule is where the bars' baseline is
@@ -268,8 +270,8 @@ var FunnelColumnChart = Chart.extend({
         var content = '<h3 style="color:black">' + d.title + '</h3><div style="margin-left:20px"><p><h4 style="display:inline">' + d.total + '</h4>  ' + self.unit + '</p>';
 
         if(i > 0) content += '<p><h4 style="display:inline">' + d.y + '</h4>% of initial ' + self.unit + '</p>'
-          + '<p style="color:' + self.benchmarkFill + ';display:inline"> Was </p> <h4 style="color:' + self.benchmarkFill + ';display:inline">' + d.benchmark 
-          + '%</h4> <p style="color:' + self.benchmarkFill + ';display:inline"> three months ago (benchmark) </p></div>';
+          + '<p style="color:' + self.benchmarkFill + ';display:inline"> Has been <br /> </p> <h4 style="color:' + self.benchmarkFill + ';display:inline">' + d.benchmark 
+          + '%</h4> <p style="color:' + self.benchmarkFill + ';display:inline"> the last ' + self.benchmarkTime + ' (benchmark) </p></div>';
         
         var tooltip = '<div id="tooltip" style="' + style + '">' + content + '</div>';  
         $(selector).append(tooltip);
