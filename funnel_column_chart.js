@@ -24,6 +24,7 @@ var FunnelColumnChart = Chart.extend({
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
 
     this.benchmarkTime = this.benchmarkTime || "";
+    this.benchmark = this.benchmark || false;
     
     // Set up rules, axis, ticks
     this.numRules = this.numRules || 1; // number of rules to add, first rule is where the bars' baseline is
@@ -51,7 +52,7 @@ var FunnelColumnChart = Chart.extend({
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
     data.values = d3.layout.stack()($.map(data.values, function(values, key){ return [values]; }));
 
-    this.barWidth = $(window).width()/data.values[0].length - 2*this.space;
+    this.barWidth = $(window).width()/data.values[0].length - 3*this.space;
     if(this.barWidth < 0) console.log("'space' option is too large for the number of bars given!");
 
     this.arrowHeight = 20 + 35 * (data.values[0][1].content.length+1);
@@ -80,7 +81,9 @@ var FunnelColumnChart = Chart.extend({
       .range([self.height - self.topMargin - self.bottomMargin, 0]);
 
   
-    // Define yAxis
+    /*********
+      Y-AXIS
+    **********/
     this.yAxis = d3.svg.axis().scale(this.vScale).ticks(this.ynumTicks).tickFormat(
         function(d) {
           var wholeNumber = d3.format(",0d");
@@ -91,18 +94,22 @@ var FunnelColumnChart = Chart.extend({
         }
     ).orient(this.yaxis_position);
 
-    //draw legend
+    /*********
+      LEGEND
+    **********/
     if(self.legend) {
       var legend = '<div style="background-color:white;border-color:#EDEDED;border-bottom-width:5px;border-style:solid;padding:12px;float:' + self.legend.position + '"><table>';
-      var benchmarkPath = '<svg style="height:15px"><g><line x1=0 x2=35 y1=5 y2=5 style="stroke:' + self.benchmarkFill + ';stroke-width:2;"></line>'
-      + '<path d="m14 5 l4 4 l4 -4 l-4 -4 Z" style="fill:' + self.benchmarkFill + '"></path></g></svg>'; 
-      legend += '<tr><td style="width:40px">' + benchmarkPath + '</td>';
-      if(self.legend.benchmarkLabel)
-        legend += '<td style="color:' + self.benchmarkFill + '">' + self.legend.benchmarkLabel + '</td>';
-      else 
-        legend += '<td style="color:' + self.benchmarkFill + '">' + self.legend.benchmarkLabel + '</td>';
       
-
+      if(self.benchmark) {
+        var benchmarkPath = '<svg style="height:15px"><g><line x1=0 x2=35 y1=5 y2=5 style="stroke:' + self.benchmarkFill + ';stroke-width:2;"></line>'
+        + '<path d="m14 5 l4 4 l4 -4 l-4 -4 Z" style="fill:' + self.benchmarkFill + '"></path></g></svg>'; 
+        legend += '<tr><td style="width:40px">' + benchmarkPath + '</td>';
+        if(self.legend.benchmarkLabel)
+          legend += '<td style="color:' + self.benchmarkFill + '">' + self.legend.benchmarkLabel + '</td>';
+        else 
+          legend += '<td style="color:' + self.benchmarkFill + '">' + self.legend.benchmarkLabel + '</td>';
+      }
+      
       legend += '<td style="width:35px"><svg><rect x=15 width=10 height=25 style="fill:' + self.fill + '"></rect></svg></td>' ;
       if(self.legend.metricLabel) 
         legend += '<td style="color:' + self.fill + '" >' + self.legend.metricLabel + '</td>';
@@ -112,6 +119,10 @@ var FunnelColumnChart = Chart.extend({
 
       $(selector).append(legend);
     }
+
+    /**************
+      DELAY REPORT
+    ***************/
 
     this.vis = d3.select(selector)
         .append("svg:svg")
@@ -156,7 +167,9 @@ var FunnelColumnChart = Chart.extend({
     var groups = this.g.selectAll("rect." + "series_" + key).data(values)
       .enter().append("svg:g");
 
-    //makes bars
+    /*********
+      BARS
+    **********/
     var bars = groups.append("svg:rect")
       .attr("class", function() { return "series_" + key; })
       .attr("x", function(d, i) {return i*self.barWidth + (i+1)*self.space})
@@ -176,121 +189,143 @@ var FunnelColumnChart = Chart.extend({
         return self.vScale( self.stacked? (d.y0+d.y) : d.y ); 
       });
       
-      //makes benchmarks
-    var benchmarks = groups.append("svg:line")
-      .attr("x1", function(d, i) {return (i+.5)*self.barWidth + (i+1)*self.space})
-      .attr("x2", function(d, i) {return (i+.5)*self.barWidth + (i+1)*self.space})
-      .attr("y1", function(d) { 
-        return self.vScale( d.benchmark ); 
-      })
-      .attr("y2", function(d) { 
-        return self.vScale( d.benchmark ); 
-      })
-      .style("stroke", self.benchmarkFill)
-      .attr("stroke-width", 2)
-      .transition().duration(function(d, idx) {
-        return (idx+1) * 250;
-      })
-      .attr("x1", function(d, i) {return (i+0.25)*self.barWidth + (i+1)*self.space})
-      .attr("x2", function(d, i) {return (i+0.75)*self.barWidth + (i+1)*self.space});
-
-    groups.append("svg:path")
-      .attr("d", function(d, i) {
-        var x = (i+0.5)*self.barWidth + (i+1)*self.space;
-        var y = self.vScale( d.benchmark );
-        return "m" + (x-5) + " " + y + " l5 5 l5 -5 l-5 -5 Z";
-      })
-      .style("fill", self.benchmarkFill)
-      .attr("opacity", 0.0)
-      .transition().duration(function(d, idx) {
-        return idx * 250;
-      })
-      .attr("opacity", 1.0);
-
-      //makes arrows
-      var x_indent = self.space;
-      var y_indent = this.arrowHeight/(values[1].content.length + 2);
-      var arrow_extend = "-" + self.space/3 + " -" + self.space/3;
-
-      var arrowGroups = groups.append("svg:g").attr("transform", function(d,i) {
-        var x = i*self.barWidth + (i+1)*self.space;
-        var y = self.vScale(d.y0) + 25;
-        return "translate(" + x + ", " + y + ")";
-      });
-
-      arrowGroups.attr("opacity", 0.0)
-      .transition().duration(function(d, idx) {
-        return idx * 350;
-      })
-      .attr("opacity", 1.0);
-
-
-      arrowGroups.append("svg:path")
-        .attr("d", function(d, i) {
-          var p = "m"  + arrow_extend + " h" + self.arrowWidth + "l" + self.space/2 + " " 
-            + self.arrowHeight/2 + "  l-" + self.space/2 + " " + self.arrowHeight/2 + "  h-" + self.arrowWidth;
-          if(i === 0) //if first arrow, cutoff end
-            return p += "L" + arrow_extend + " Z";
-          else if(i === values.length - 1) //if last
-            return "m" + arrow_extend + " h" + (self.arrowWidth + self.space/2) + "v" + self.arrowHeight +  " h-" + (self.arrowWidth + self.space/2)
-              + " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z" ;
-          return p += " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z"; //if any other, make arrow
+    /*************
+      BENCHMARKS
+    **************/
+    if(self.benchmark) {
+      var benchmarks = groups.append("svg:line")
+        .attr("x1", function(d, i) {return (i+.5)*self.barWidth + (i+1)*self.space})
+        .attr("x2", function(d, i) {return (i+.5)*self.barWidth + (i+1)*self.space})
+        .attr("y1", function(d) { 
+          return self.vScale( d.benchmark ); 
         })
-        .style("stroke", self.fill)
-        .attr("stroke-width", 3)
-        .style("fill", "#EDF7FF");
+        .attr("y2", function(d) { 
+          return self.vScale( d.benchmark ); 
+        })
+        .style("stroke", self.benchmarkFill)
+        .attr("stroke-width", 2)
+        .transition().duration(function(d, idx) {
+          return (idx+1) * 250;
+        })
+        .attr("x1", function(d, i) {return (i+0.25)*self.barWidth + (i+1)*self.space})
+        .attr("x2", function(d, i) {return (i+0.75)*self.barWidth + (i+1)*self.space});
 
-      var text = arrowGroups.append("svg:text").attr("y", y_indent);
+      groups.append("svg:path")
+        .attr("d", function(d, i) {
+          var x = (i+0.5)*self.barWidth + (i+1)*self.space;
+          var y = self.vScale( d.benchmark );
+          return "m" + (x-5) + " " + y + " l5 5 l5 -5 l-5 -5 Z";
+        })
+        .style("fill", self.benchmarkFill)
+        .attr("opacity", 0.0)
+        .transition().duration(function(d, idx) {
+          return idx * 250;
+        })
+        .attr("opacity", 1.0);  
+    }
+
+    /***********
+      ARROWS
+    ************/
+    var x_indent = self.space;
+    var y_indent = this.arrowHeight/(values[1].content.length + 2);
+    var arrow_extend = "-" + self.space/3 + " -" + self.space/3;
+
+    var arrowGroups = groups.append("svg:g").attr("transform", function(d,i) {
+      var x = i*self.barWidth + (i+1)*self.space;
+      var y = self.vScale(d.y0) + 25;
+      return "translate(" + x + ", " + y + ")";
+    });
+
+    arrowGroups.attr("opacity", 0.0)
+    .transition().duration(function(d, idx) {
+      return idx * 350;
+    })
+    .attr("opacity", 1.0);
+
+
+    arrowGroups.append("svg:path")
+      .attr("d", function(d, i) {
+        var p = "m"  + arrow_extend + " h" + self.arrowWidth + "l" + self.space/2 + " " 
+          + self.arrowHeight/2 + "  l-" + self.space/2 + " " + self.arrowHeight/2 + "  h-" + self.arrowWidth;
+        if(i === 0) //if first arrow, cutoff end
+          return p += "L" + arrow_extend + " Z";
+        else if(i === values.length - 1) //if last
+          return "m" + arrow_extend + " h" + (self.arrowWidth + self.space/2) + "v" + self.arrowHeight +  " h-" + (self.arrowWidth + self.space/2)
+            + " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z" ;
+        return p += " l" + self.space/2 + " -" + self.arrowHeight/2 + "  L" + arrow_extend + " Z"; //if any other, make arrow
+      })
+      .style("stroke", self.fill)
+      .attr("stroke-width", 3)
+      .style("fill", "#EDF7FF");
+
+    var text = arrowGroups.append("svg:text").attr("y", y_indent);
+    
+    text.append("svg:tspan")
+      .attr("x", x_indent)
+      .attr("font-weight", "bold")
+      .attr("font-size", 15)
+      .text(function(d) { return d.title;});
+
+    text.selectAll("text").data(function(d, i) { return i!=0 ? d.content : []}).enter().append("svg:tspan")
+      .attr("x", x_indent)
+      .attr("dy", 25)
+      .attr("font-size", 13)
+      .text(function(s) {return s + "% of initial"});
+
+    /***********
+      TOOLTIPS
+    ************/
+
+    groups.on("mouseover", function(d, i) {
+      $($($(this).children()[3]).children()[0]).css("stroke", "#696969");
+      $($(this).children()[0]).css("stroke-width", 3);
+      $($(this).children()[0]).css("stroke", "#696969");
       
-      text.append("svg:tspan")
-        .attr("x", x_indent)
-        .attr("font-weight", "bold")
-        .attr("font-size", 15)
-        .text(function(d) { return d.title;});
+      var j = i > groups[0].length/2 ? i : i+1;
 
-      text.selectAll("text").data(function(d, i) { return i!=0 ? d.content : []}).enter().append("svg:tspan")
-        .attr("x", x_indent)
-        .attr("dy", 25)
-        .attr("font-size", 13)
-        .text(function(s) {return s + "% of initial"});
+      var x = (j)*(self.barWidth) + (j+1)*self.space + self.leftMargin + self.yAxisMargin;
+      if(i > groups[0].length/2) x -= (self.barWidth + 2*self.space);
 
-      groups.on("mouseover", function(d, i) {
-        $($($(this).children()[3]).children()[0]).css("stroke", "#696969");
-        $($(this).children()[0]).css("stroke-width", 3);
-        $($(this).children()[0]).css("stroke", "#696969");
-        
-        var j = i > groups[0].length/2 ? i : i+1;
+      var y = self.height - self.vScale(d.y) + self.arrowHeight;
+      var style = '-webkit-transform:translate(' + x + 'px, -' + y + 'px);width:' + (self.barWidth - self.space/2) + 'px';
 
-        var x = (j)*(self.barWidth) + (j+1)*self.space + self.leftMargin + self.yAxisMargin;
-        if(i > groups[0].length/2) x -= (self.barWidth + 2*self.space);
+      var content = '<h3 style="color:black">' + d.title + '</h3><div style="margin-left:20px"><p><h4 style="display:inline">' + d.total + '</h4>  ' + self.unit + '</p>';
 
-        var y = self.height - self.vScale(d.benchmark) + self.arrowHeight;
-        var style = '-webkit-transform:translate(' + x + 'px, -' + y + 'px);width:' + (self.barWidth - self.space/2) + 'px';
-
-        var content = '<h3 style="color:black">' + d.title + '</h3><div style="margin-left:20px"><p><h4 style="display:inline">' + d.total + '</h4>  ' + self.unit + '</p>';
-
-        if(i > 0) content += '<p><h4 style="display:inline">' + d.y + '</h4>% of initial ' + self.unit + '</p>'
-          + '<p style="color:' + self.benchmarkFill + ';display:inline"> Has been <br /> </p> <h4 style="color:' + self.benchmarkFill + ';display:inline">' + d.benchmark 
-          + '%</h4> <p style="color:' + self.benchmarkFill + ';display:inline"> the last ' + self.benchmarkTime + ' (benchmark) </p></div>';
-        
-        var tooltip = '<div id="tooltip" style="' + style + '">' + content + '</div>';  
-        $(selector).append(tooltip);
-
-        if(i > groups[0].length/2) {
-          $("#tooltip").addClass("afterarrow");
-        } else {
-          $("#tooltip").addClass("beforearrow")
+      if(i > 0) { 
+        content += '<p><h4 style="display:inline">' + d.y + '</h4>% of initial ' + self.unit + '</p>';
+        if(d.delay) {
+          content += '<p style="display:inline">Averaged <h4 style="display:inline">' + d.delay + '</h4> delay between this and the last step</p>';
         }
+        if(self.benchmark) {
+          content += '<p style="color:' + self.benchmarkFill + ';display:inline"> Has been <br /> </p> <h4 style="color:' + self.benchmarkFill + ';display:inline">' + d.benchmark 
+          + '%</h4> <p style="color:' + self.benchmarkFill + ';display:inline"> the last ' + self.benchmarkTime + ' (benchmark) </p></div>';
+          if(d.benchdelay) {
+            content += '<p style="color:' + self.benchmarkFill + 'display:inline">Averaged <h4 style="color:' + self.benchmarkFill + 'display:inline">' + d.delay + '</h4> delay between this and the last step in the last ' + self.benchmarkTime + '(benchmark delay)</p>';
+        }
+        }
+      }
 
 
-      });
 
-      groups.on("mouseout", function(d, i) {
-        $($($(this).children()[3]).children()[0]).css("stroke", self.fill);
-        $($(this).children()[0]).css("stroke-width", 0);
-        $($(this).children()[0]).css("stroke", "none");
-        $("#tooltip").remove();
-      }); 
+      var tooltip = '<div id="tooltip" style="' + style + '">' + content + '</div>';  
+      $(selector).append(tooltip);
+
+      if(i > groups[0].length/2) {
+        $("#tooltip").addClass("afterarrow");
+      } else {
+        $("#tooltip").addClass("beforearrow")
+      }
+
+
+    });
+
+    groups.on("mouseout", function(d, i) {
+      $($($(this).children()[3]).children()[0]).css("stroke", self.fill);
+      $($(this).children()[0]).css("stroke-width", 0);
+      $($(this).children()[0]).css("stroke", "none");
+      $("#tooltip").remove();
+    }); 
   }
 
 });
