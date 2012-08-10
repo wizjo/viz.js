@@ -23,8 +23,12 @@ var FunnelColumnChart = Chart.extend({
     this.baseline = this.baseline || "bottom"; // available values: "top", "bottom"
     this.stacked = this.stacked || false; // true: stacked bars; false: grouped bars
 
-    this.benchmarkTime = this.benchmarkTime || "";
-    this.benchmark = this.benchmark || false;
+
+    // Delay Options
+    if(this.delay) {
+      this.delay.enabled = this.delay.enabled || false;
+      this.delay.unit = this.delay.unit || '';  
+    }
     
     // Set up rules, axis, ticks
     this.numRules = this.numRules || 1; // number of rules to add, first rule is where the bars' baseline is
@@ -43,10 +47,18 @@ var FunnelColumnChart = Chart.extend({
 
     this.fill = this.fill || "#77c5d5";
     
-    this.benchmarkFill = this.benchmarkFill || "#AA4643";
+    // Benchmark Options
+    if(this.benchmark) {
+      this.benchmark.enabled = this.benchmark.enabled || false;
+      this.benchmark.fill = this.benchmark.fill || "#AA4643";
+      this.benchmark.time = this.benchmark.time || "";
+    }
 
-    this.legend = this.legend || null; 
-    this.legend.position = this.legend.position || "right";
+    // Legend Options
+    if(this.legend) {
+      this.legend.enabled = this.legend.enabled || false; 
+      this.legend.position = this.legend.position || "right";
+    }
 
     // Reformat data for charting (and labeling)
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
@@ -94,35 +106,55 @@ var FunnelColumnChart = Chart.extend({
         }
     ).orient(this.yaxis_position);
 
+    /******************
+      GROUPED REPORTS
+    *******************/
+    var div = document.createElement('div');
+    div.setAttribute('float', (self.legend ? self.legend.position : 'right'));
+
     /*********
       LEGEND
     **********/
-    if(self.legend) {
-      var legend = '<div style="background-color:white;border-color:#EDEDED;border-bottom-width:5px;border-style:solid;padding:12px;float:' + self.legend.position + '"><table>';
+    if(self.legend && self.legend.enabled) {
+      var legend = '<div style="vertical-align:top;background-color:white;border-radius:10px;float:' + self.legend.position + ';border-color:#EDEDED;border-style:solid;padding:17px;"><table>';
       
-      if(self.benchmark) {
-        var benchmarkPath = '<svg style="height:15px"><g><line x1=0 x2=35 y1=5 y2=5 style="stroke:' + self.benchmarkFill + ';stroke-width:2;"></line>'
-        + '<path d="m14 5 l4 4 l4 -4 l-4 -4 Z" style="fill:' + self.benchmarkFill + '"></path></g></svg>'; 
+      if(self.benchmark && self.benchmark.enabled) {
+        var benchmarkPath = '<svg style="height:15px"><g><line x1=0 x2=35 y1=5 y2=5 style="stroke:' + self.benchmark.fill + ';stroke-width:2;"></line>'
+        + '<path d="m14 5 l4 4 l4 -4 l-4 -4 Z" style="fill:' + self.benchmark.fill + '"></path></g></svg>'; 
         legend += '<tr><td style="width:40px">' + benchmarkPath + '</td>';
         if(self.legend.benchmarkLabel)
-          legend += '<td style="color:' + self.benchmarkFill + '">' + self.legend.benchmarkLabel + '</td>';
+          legend += '<td style="padding-right:15px;color:' + self.benchmark.fill + '">' + self.legend.benchmarkLabel + '</td>';
         else 
-          legend += '<td style="color:' + self.benchmarkFill + '">' + self.legend.benchmarkLabel + '</td>';
+          legend += '<td style="padding-right:15px;color:' + self.benchmark.fill + '">' + self.legend.benchmarkLabel + '</td>';
       }
       
-      legend += '<td style="width:35px"><svg><rect x=15 width=10 height=25 style="fill:' + self.fill + '"></rect></svg></td>' ;
+      legend += '<td style="width:35px"><svg width=25 height=25><rect x=15 y=3 width=10 height=20 fill=' + self.fill + ' style="fill:' + self.fill + '"></rect><rect x=5 y=15 width=10 height=8 fill=' + self.fill + ' style="fill:' + self.fill + '"></rect></svg></td>' ;
       if(self.legend.metricLabel) 
         legend += '<td style="color:' + self.fill + '" >' + self.legend.metricLabel + '</td>';
       else 
         legend += '<td style="color:' + self.fill + '" >' + self.name + '</td>';
       legend += '</tr></table></div>';
 
-      $(selector).append(legend);
+      $(div).append(legend);
     }
 
     /**************
       DELAY REPORT
     ***************/
+    if(self.delay && self.delay.enabled) {
+      var average = 0;
+      for(var i=0; i < (data.values[0]).length; i++) {
+        if(data.values[0][i].delay) 
+          average += new Number(data.values[0][i].delay);
+      }
+      average = (average/(data.values[0]).length).toFixed(2);
+      var delayReport = '<div style="vertical-align:top;background-color:#EDEDED;border-radius:10px;float:right;margin-right:15px;padding:12px;color:#4D4D4D">Average delay time between steps: <br /> <h1 style="color:#757575">' + average + ' ' + self.delay.unit + 's </h1></div>';
+      $(div).append(delayReport);
+    }
+
+    if($(div).children().length > 0) 
+      $(selector).append(div);
+
 
     this.vis = d3.select(selector)
         .append("svg:svg")
@@ -145,7 +177,7 @@ var FunnelColumnChart = Chart.extend({
           .attr("y1", this.vScale)
           .attr("y2", this.vScale)
           .attr("x1", 0)
-          .attr("x2", this.width)
+          .attr("x2", this.width - self.space)
           .attr("style", "stroke-width:" + self.lineStrokeWidth + ";stroke:" + self.lineStrokeColor);
     }
 
@@ -192,7 +224,7 @@ var FunnelColumnChart = Chart.extend({
     /*************
       BENCHMARKS
     **************/
-    if(self.benchmark) {
+    if(self.benchmark && self.benchmark.enabled) {
       var benchmarks = groups.append("svg:line")
         .attr("x1", function(d, i) {return (i+.5)*self.barWidth + (i+1)*self.space})
         .attr("x2", function(d, i) {return (i+.5)*self.barWidth + (i+1)*self.space})
@@ -202,7 +234,7 @@ var FunnelColumnChart = Chart.extend({
         .attr("y2", function(d) { 
           return self.vScale( d.benchmark ); 
         })
-        .style("stroke", self.benchmarkFill)
+        .style("stroke", self.benchmark.fill)
         .attr("stroke-width", 2)
         .transition().duration(function(d, idx) {
           return (idx+1) * 250;
@@ -216,7 +248,7 @@ var FunnelColumnChart = Chart.extend({
           var y = self.vScale( d.benchmark );
           return "m" + (x-5) + " " + y + " l5 5 l5 -5 l-5 -5 Z";
         })
-        .style("fill", self.benchmarkFill)
+        .style("fill", self.benchmark.fill)
         .attr("opacity", 0.0)
         .transition().duration(function(d, idx) {
           return idx * 250;
@@ -295,13 +327,13 @@ var FunnelColumnChart = Chart.extend({
       if(i > 0) { 
         content += '<p><h4 style="display:inline">' + d.y + '</h4>% of initial ' + self.unit + '</p>';
         if(d.delay) {
-          content += '<p style="display:inline">Averaged <h4 style="display:inline">' + d.delay + '</h4> delay between this and the last step</p>';
+          content += '<p style="display:inline">Averaged <h4 style="display:inline">' + d.delay + ' ' + self.delay.unit + '</h4> delay between this and the last step</p>';
         }
-        if(self.benchmark) {
-          content += '<p style="color:' + self.benchmarkFill + ';display:inline"> Has been <br /> </p> <h4 style="color:' + self.benchmarkFill + ';display:inline">' + d.benchmark 
-          + '%</h4> <p style="color:' + self.benchmarkFill + ';display:inline"> the last ' + self.benchmarkTime + ' (benchmark) </p></div>';
+        if(d.benchmark) {
+          content += '<p style="color:' + self.benchmark.fill + ';display:inline"> Has been <br /> </p> <h4 style="color:' + self.benchmark.fill + ';display:inline">' + d.benchmark 
+          + '%</h4> <p style="color:' + self.benchmark.fill + ';display:inline"> the last ' + self.benchmark.time + ' (benchmark) </p></div>';
           if(d.benchdelay) {
-            content += '<p style="color:' + self.benchmarkFill + 'display:inline">Averaged <h4 style="color:' + self.benchmarkFill + 'display:inline">' + d.delay + '</h4> delay between this and the last step in the last ' + self.benchmarkTime + '(benchmark delay)</p>';
+            content += '<p style="color:' + self.benchmark.fill + 'display:inline">Averaged <h4 style="color:' + self.benchmark.fill + 'display:inline">' + d.delay + '</h4> delay between this and the last step in the last ' + self.benchmark.time + '(benchmark delay)</p>';
         }
         }
       }
