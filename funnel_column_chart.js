@@ -152,7 +152,7 @@ var FunnelColumnChart = Chart.extend({
             has++;
           }
         }
-        average = (average/has).toFixed(2);
+        average = average != 0 ? (average/has).toFixed(2) : 'N/A';
       }
       else average = self.delay.average.toFixed(2);
       var delayReport = '<div style="vertical-align:top;background-color:#EDEDED;border-radius:10px;float:right;margin-right:15px;padding:12px;color:#4D4D4D">Average delay time between steps: <br /> <h1 style="color:#757575">' + average + ' ' + self.delay.unit + 's </h1></div>';
