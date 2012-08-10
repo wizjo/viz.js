@@ -28,6 +28,7 @@ var FunnelColumnChart = Chart.extend({
     if(this.delay) {
       this.delay.enabled = this.delay.enabled || false;
       this.delay.unit = this.delay.unit || '';  
+      this.delay.average = this.delay.average || null;
     }
     
     // Set up rules, axis, ticks
@@ -64,7 +65,7 @@ var FunnelColumnChart = Chart.extend({
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
     data.values = d3.layout.stack()($.map(data.values, function(values, key){ return [values]; }));
 
-    var division = data.values[0].length > 4 ? data.values[0].length : data.values[0].length + 1;
+    var division = data.values[0].length > 4 ? data.values[0].length : data.values[0].length + 0.5;
     this.barWidth = $(window).width()/division - 2*this.space;
     if(this.barWidth < 0) console.log("'space' option is too large for the number of bars given!");
 
@@ -111,7 +112,7 @@ var FunnelColumnChart = Chart.extend({
       GROUPED REPORTS
     *******************/
     var div = document.createElement('div');
-    div.setAttribute('float', (self.legend ? self.legend.position : 'right'));
+    div.setAttribute('margin-right', self.rightMargin);
 
     /*********
       LEGEND
@@ -143,12 +144,17 @@ var FunnelColumnChart = Chart.extend({
       DELAY REPORT
     ***************/
     if(self.delay && self.delay.enabled) {
-      var average = 0;
-      for(var i=0; i < (data.values[0]).length; i++) {
-        if(data.values[0][i].delay) 
-          average += new Number(data.values[0][i].delay);
+      if(!self.delay.average) {
+        var average = 0, has = 0;
+        for(var i=0; i < (data.values[0]).length; i++) {
+          if(data.values[0][i].delay && data.values[0][i].delay != 0) { 
+            average += new Number(data.values[0][i].delay);
+            has++;
+          }
+        }
+        average = (average/has).toFixed(2);
       }
-      average = (average/(data.values[0]).length).toFixed(2);
+      else average = self.delay.average.toFixed(2);
       var delayReport = '<div style="vertical-align:top;background-color:#EDEDED;border-radius:10px;float:right;margin-right:15px;padding:12px;color:#4D4D4D">Average delay time between steps: <br /> <h1 style="color:#757575">' + average + ' ' + self.delay.unit + 's </h1></div>';
       $(div).append(delayReport);
     }
