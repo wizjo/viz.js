@@ -64,7 +64,7 @@ var FunnelColumnChart = Chart.extend({
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
     data.values = d3.layout.stack()($.map(data.values, function(values, key){ return [values]; }));
 
-    this.barWidth = $(window).width()/data.values[0].length - 3*this.space;
+    this.barWidth = $(window).width()/data.values[0].length - 2*this.space;
     if(this.barWidth < 0) console.log("'space' option is too large for the number of bars given!");
 
     this.arrowHeight = 20 + 35 * (data.values[0][1].content.length+1);
@@ -299,11 +299,11 @@ var FunnelColumnChart = Chart.extend({
       .attr("font-size", 15)
       .text(function(d) { return d.title;});
 
-    text.selectAll("text").data(function(d, i) { return i!=0 ? d.content : []}).enter().append("svg:tspan")
+    text.selectAll("text").data(function(d, i) { return d.content }).enter().append("svg:tspan")
       .attr("x", x_indent)
       .attr("dy", 25)
       .attr("font-size", 13)
-      .text(function(s) {return s + "% of initial"});
+      .text(function(s) {return s});
 
     /***********
       TOOLTIPS
