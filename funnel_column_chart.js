@@ -184,7 +184,7 @@ var FunnelColumnChart = Chart.extend({
           .attr("y1", this.vScale)
           .attr("y2", this.vScale)
           .attr("x1", 0)
-          .attr("x2", this.width - self.space)
+          .attr("x2", this.width - this.space - 65)
           .attr("style", "stroke-width:" + self.lineStrokeWidth + ";stroke:" + self.lineStrokeColor);
     }
 
