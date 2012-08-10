@@ -64,7 +64,8 @@ var FunnelColumnChart = Chart.extend({
     this.series = this.series || $.map(data.values, function(values, key){ return [key]; })
     data.values = d3.layout.stack()($.map(data.values, function(values, key){ return [values]; }));
 
-    this.barWidth = $(window).width()/data.values[0].length - 2*this.space;
+    var division = data.values[0].length > 4 ? data.values[0].length : data.values[0].length + 1;
+    this.barWidth = $(window).width()/division - 2*this.space;
     if(this.barWidth < 0) console.log("'space' option is too large for the number of bars given!");
 
     this.arrowHeight = 20 + 35 * (data.values[0][1].content.length+1);
