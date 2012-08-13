@@ -1,11 +1,61 @@
-/* 
-  var data = {
-    labels: [<DIV>, <DIV>, <DIV>, <DIV>, <DIV>], 
-    values: {
-      "Deloitte": [ {x:0, y:75.9}, {x:1, y:36.9}, {x:2, y:9.8}, {x:3, y:0.2}, {x:4, y:0.1} ], 
-      "Nationwide": [ {x:0, y:95.0}, {x:1, y:10.9}, {x:2, y:9.8}, {x:3, y:0.1}, {x:4, y:2.4} ]
-    }
-  }
+/* DECLARATION EXAMPLE
+  data = 
+  [{  benchmark: "100"
+      content: []
+      title: "Funnel Entries"
+      total: "16,100"
+      delay: 0
+      x: 0
+      y: 100
+      y0: 0
+    },
+   {  benchmark: "96.91"
+      content: ["97.27% of initial users"] //content is the text that appears in the arrows
+      title: "Confirm" // title is the name of the funnel step
+      total: "15,660" //total number of people in that step
+      delay: 2.4 //delay time between last step and this step
+      x: 1 //index
+      y: "97.27" //percentage of total
+      y0: 0
+   },...
+  ]
+
+var selector = ... //id of div to render to
+
+var chart = new FunnelColumnChart(selector, data, {
+        space: 15 // spacing between bars
+        , leftMargin: 10 // give it a larger leftMargin when you want the y-axis to be on the left-hand side
+        , rightMargin: 50
+        , topMargin: 25
+        , name: 'title'
+        , baseline: "bottom"
+        , stacked: true // false: grouped bars; true: stacked bars (when there's one than one series)
+        , fill: '#77c5d5'
+        , numRules: 11 // number of rules to add, first rule is where the bars' baseline is
+        , yaxis_position: "left" // position to place yaxis: "left", "right"
+        , ynumTicks: 5 // number of ticks on the Y Axis
+        , yAxisMargin: 30
+        , show_labels: true
+        , label_class: "arrow_box" //custom css styling allowed for arrows
+        , percent: true //whether to display percentage 
+        , unit: users //unit to put after (signup funnel had "users", recruiting had 'applicants')
+        , benchmark: {
+            enabled: true //whether to show benchmark marks
+          , time: "12 weeks" //displays in legend box
+        }
+        , legend: { 
+            enabled: true, 
+            metricLabel: '' -- description for metric in legend
+            benchmarkLabel: '' -- description for benchmark in legend
+            position: left -- which side should the legend go?
+          },
+        , delay: { 
+            enabled: true //display delay box
+          , unit: 'day' // unit of the delay (days, weeks, etc)
+          , average: averageDelay //give it an average delay or it will automatically average all delays in data
+        }
+       });
+
 */
 
 var FunnelColumnChart = Chart.extend({
