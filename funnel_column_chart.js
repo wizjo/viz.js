@@ -327,7 +327,7 @@ var FunnelColumnChart = Chart.extend({
       if(i > groups[0].length/2) x -= (self.barWidth + 2*self.space);
 
       var y = self.height - self.vScale(d.y) + self.arrowHeight;
-      var style = '-webkit-transform:translate(' + x + 'px, -' + y + 'px);width:' + (self.barWidth - self.space/2) + 'px';
+      var style = '-o-transform:translate(' + x + 'px, -' + y + 'px);-webkit-transform:translate(' + x + 'px, -' + y + 'px);-ms-transform:translate(' + x + 'px, -' + y + 'px);width:' + (self.barWidth - self.space/2) + 'px;-moz-transform:translate(' + x + 'px, -' + y + 'px)';
 
       var content = '<h3 style="color:black">' + d.title + '</h3><div style="margin-left:20px"><p><h4 style="display:inline">' + d.total + '</h4>  ' + self.unit + '</p>';
 
