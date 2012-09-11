@@ -57,6 +57,10 @@ var BulletChart = Chart.extend({
     if(this.subtitle) {
       this.addSubTitle();
     }
+
+    if(this.annotation) {
+      this.addAnnotation();
+    }
     
     if(this.hover_events) {
       this.addChartTips();
@@ -76,9 +80,17 @@ var BulletChart = Chart.extend({
   , addSubTitle: function() {
     this.t.append("svg:text")
         .attr("class", "subtitle")
-        .attr("transform", "translate(" + this.leftMargin*.95 + ", " + (this.height - this.topMargin - this.bottomMargin) / 2 + ")")
+        .attr("transform", "translate(" + this.leftMargin*.70 + ", " + (this.height - this.topMargin - this.bottomMargin + 4) / 2 + ")")
         .attr("dy", "1em")
         .text(function(d) { return d.subtitle; });
+  }
+
+  , addAnnotation: function() {
+    this.t.append("svg:text")
+        .attr("class", "annotation")
+        .attr("transform", "translate(" + this.leftMargin*.95 + ", " + (this.height - this.topMargin - this.bottomMargin + 6) / 2 + ")")
+        .attr("dy", "1em")
+        .text(function(d) { return "(" + d.annotation + ")"; });
   }
   
   , addChartTips: function() {
