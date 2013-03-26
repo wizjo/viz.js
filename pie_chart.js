@@ -1,9 +1,9 @@
 /*
 var data = { 
   series1: [ {"label":"Web", "value":76.16}, {"label":"Desktop", "value":16.81}, 
-    {"label":"Mobile", "value":4.27}, {"label":"Other", "value":2.72}, {"label":"SharePoint", "value":0.03} ],
+    {"label":"Mobile", "value":4.27}, {"label":"Other", "value":2.72}, {"label":"Windows Phone", "value":0.03} ],
   series2: [ {"label":"Web", "value":36.16}, {"label":"Desktop", "value":26.81}, 
-    {"label":"Mobile", "value":14.27}, {"label":"Other", "value":2.72}, {"label":"SharePoint", "value":10.03} ]
+    {"label":"Mobile", "value":14.27}, {"label":"Other", "value":2.72}, {"label":"Windows Phone", "value":10.03} ]
   };
 */
 

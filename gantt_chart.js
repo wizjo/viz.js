@@ -1,13 +1,14 @@
 /*
 var data = [
-  {"id":1, "param":{"period":"2001"},
+  {"id":1, "param":{"code":"2001"},
     "values":[
     {"end_time":"2012/02/07 17:57:57","state":"succeeded","start_time":"2012/02/07 17:57:36"},
     {"end_time":"2012/02/07 20:03:21","state":"succeeded","start_time":"2012/02/07 20:03:16"},
     {"end_time":"2012/02/08 08:04:43","state":"succeeded","start_time":"2012/02/08 08:04:30"}],
-    "label":"verthouse/dashboard_rollups/activation_sources"
+    "label":"group-a"
   },
-  {"id":2, "param":{"period":"2001"},
+
+  {"id":2, "param":{"code":"2001"},
     "values":[
     {"end_time":"2012/02/07 17:57:56","state":"succeeded","start_time":"2012/02/07 17:57:35"},
     {"end_time":"2012/02/07 18:02:33","state":"succeeded","start_time":"2012/02/07 18:02:28"},
@@ -26,9 +27,10 @@ var data = [
     {"end_time":"2012/02/08 07:02:34","state":"succeeded","start_time":"2012/02/08 07:02:29"},
     {"end_time":"2012/02/08 08:02:22","state":"succeeded","start_time":"2012/02/08 08:02:19"},
     {"end_time":"2012/02/08 09:02:28","state":"running","start_time":"2012/02/08 09:02:25"}],
-    "label":"verthouse/dashboard_rollups/activations"
+    "label":"group-b"
   },
-  {"id":3, "param":{"period":"2007"},
+
+  {"id":3, "param":{"code":"2007"},
     "values":[
     {"end_time":"2012/02/07 17:57:34","state":"succeeded","start_time":"2012/02/07 17:57:24"},
     {"end_time":"2012/02/07 18:02:30","state":"succeeded","start_time":"2012/02/07 18:02:23"},
@@ -47,9 +49,10 @@ var data = [
     {"end_time":"2012/02/08 07:02:34","state":"succeeded","start_time":"2012/02/08 07:02:30"},
     {"end_time":"2012/02/08 08:02:28","state":"succeeded","start_time":"2012/02/08 08:02:23"},
     {"end_time":"2012/02/08 09:02:28","state":"running","start_time":"2012/02/08 09:02:25"}],
-    "label":"verthouse/dashboard_rollups/activations"
+    "label":"group-c"
   },
-  { "id": 4, "param":{"period":"2001"},
+
+  { "id": 4, "param":{"code":"2001"},
     "values":[
     {"end_time":"2012/02/07 10:01:24","state":"succeeded","start_time":"2012/02/07 10:01:21"},
     {"end_time":"2012/02/07 11:01:33","state":"succeeded","start_time":"2012/02/07 11:01:29"},
@@ -64,7 +67,7 @@ var data = [
     {"end_time":"2012/02/07 20:01:37","state":"succeeded","start_time":"2012/02/07 20:01:29"},
     {"end_time":"2012/02/07 21:01:36","state":"succeeded","start_time":"2012/02/07 21:01:32"},
     {"end_time":"2012/02/07 22:01:37","state":"succeeded","start_time":"2012/02/07 22:01:33"}],
-    "label":"verthouse/dashboard_rollups/client_engagements"
+    "label":"group-d"
   }
 ];
 */

@@ -1,9 +1,9 @@
 /* 
   var data = {
-    labels: ["Web", "Desktop", "Mobile", "SharePoint", "Other"], 
+    labels: ["Web", "Desktop", "iPhone", "Windows Phone", "Android"], 
     values: {
-      "Deloitte": [ {x:0, y:75.9}, {x:1, y:36.9}, {x:2, y:9.8}, {x:3, y:0.2}, {x:4, y:0.1} ], 
-      "Nationwide": [ {x:0, y:95.0}, {x:1, y:10.9}, {x:2, y:9.8}, {x:3, y:0.1}, {x:4, y:2.4} ]
+      "SOMA": [ {x:0, y:75.9}, {x:1, y:36.9}, {x:2, y:9.8}, {x:3, y:0.2}, {x:4, y:0.1} ], 
+      "Market Square": [ {x:0, y:95.0}, {x:1, y:10.9}, {x:2, y:9.8}, {x:3, y:0.1}, {x:4, y:2.4} ]
     }
   }
 */
