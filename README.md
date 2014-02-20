@@ -1,4 +1,4 @@
-####Yammer's very own Javascript visualization library, built on top of d3.js.
+#### Declarative visualization library built on top of d3.js.
 
 ####Check out what you can do with viz.js through [various examples](http://yammer.github.com/viz.js).  
 
