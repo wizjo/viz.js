@@ -1,0 +1,28 @@
+{
+  "name": "viz.js",
+  "version": "1.0.0",
+  "homepage": "http://wizjo.github.io/viz.js",
+  "authors": [
+    "Jo Pu <jodiepu@gmail.com>"
+  ],
+  "description": "d3.js powered visualizations the declarative way",
+  "keywords": [
+    "visualization",
+    "javascript"
+  ],
+  "license": "MIT",
+  "private": true,
+  "main": ""
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "d3": "~3.4.11",
+    "tipsy": "~0.1.7"
+  }
+}
