@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link type="text/css" rel="stylesheet" href="stylesheets/example.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/tipsy.css">
+    
+    <!-- jquery -->
+    <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="../lib/jquery/jquery.tipsy.js"></script>
+    
+    <!-- include your local d3 library instead -->
+    <script type="text/javascript" src="../lib/d3.v2.min.js"></script>
+    
+    <!-- visualizie base classes -->
+    <script type="text/javascript" src="../class.js"></script>
+    <script type="text/javascript" src="../chart.js"></script>
+    <script type="text/javascript" src="../stream_graph.js"></script>
+    <script type="text/javascript" src="datasets/data_streamgraph.js"></script>
+  </head>
+  <body>
+    <h1>Streamgraph</h1>
+    <div style="margin-bottom:30px;">
+      <div id="streamgraph-1" style="align:left; border:3px solid #CCC; width:1200px; height:200px;"></div>
+      <button id="update" onclick="change_layout()">
+        Change Layout
+      </button>(check me out!)
+    </div>
+    <div id="streamgraph-2" style="border:3px solid #CCC; width:1200px; height:200px; margin-bottom:30px;"></div>
+    <div id="streamgraph-3" style="border:3px solid #CCC; width:1200px; height:200px; margin-bottom:30px;"></div>
+    
+    <script type="text/javascript">
+      offset_idx = 0;
+      order_idx = 0;
+      var options = { offset: ['zero','silhouette'], order: ['default','inside-out'] };
+      var change_layout = function(){
+        streamgraph_1min.transition(options.offset[offset_idx % 2], options.order[order_idx % 2]);
+        offset_idx ++;
+        order_idx ++;
+      }
+      
+      var streamgraph_1min = new StreamGraph("#streamgraph-1", data, {
+          width: 1200
+        , height: 200
+        , fill: d3.interpolateRgb("#0092BC", "#CA3A46")
+        , formatter: ".2f"
+        , offset: "silhouette"
+        , order: "inside-out"
+        , line_interpolate: "cardinal"
+        , start_time: new Date().valueOf() - 24*3600000 //In reality this should be a the start time of your series
+        , interval: 60000
+      });
+      
+      var streamgraph_10min = new StreamGraph("#streamgraph-2", data, {
+          width: 1200
+        , height: 200
+        , fill: d3.interpolateRgb("#0092BC", "#CA3A46")
+        , formatter: ".2f"
+        , offset: "zero"
+        , order: "reverse"
+        , line_interpolate: "step-after"
+        , start_time: new Date().valueOf() - 24*3600000
+        , interval: 600000
+      });
+      
+      var streamgraph_30min = new StreamGraph("#streamgraph-3", data, {
+          width: 1200
+        , height: 200
+        , fill: d3.interpolateRgb("#0092BC", "#CA3A46")
+        , formatter: ".2f"
+        , offset: "expand"
+        , order: "default"
+        , line_interpolate: "monotone"
+        , start_time: new Date().valueOf() - 24*3600000
+        , interval: 1800000
+      });
+    </script>
+  </body>
+</html>

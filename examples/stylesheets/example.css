@@ -1,0 +1,74 @@
+/* general page styles */
+body { font: 14px Helvetica Neue, Arial; color: #666; }
+.chart { margin: 40px 20px; border: 3px solid #CCC; width: 800px; height: 500px; padding:5px; background: #FFF; }
+.clip { float:left; display: inline; margin-bottom: 40px; }
+.clip-wrapper { float:left; margin: 5px 40px auto 20px; width: 200px; height: 200px; position: relative; }
+.clip-wrapper a img{ position: absolute; clip: rect(3 200px 200px 3); left:0; bottom: 0; top: 0; right: 0; border: 3px solid #CCC; }
+.clip-wrapper a:hover img { border: 3px solid #77c5d5; }
+h1 { text-align: center; font-size: 2em; font-weight: normal; }
+h2 { text-align: center; font-size: 1.3em; font-weight: normal; }
+
+/* general styles for axes, rules and ticks in LineChart, ColumnChart, and BarChart */
+g.axis { fill: #666; font-size: 12px; }
+line.tick { stroke: #666; }
+path.domain{ fill: none; stroke: #333; }
+line.rule { stroke: #CCC; stroke-width: 0.6px; }
+line.rule_first { stroke: #333; stroke-width: 1px; }
+
+/* styles for LineChart */
+.line_chart circle.series_0:hover, circle.series_1:hover, circle.series_2:hover, circle.series_likers:hover { stroke: #999; stroke-width: 2px; }
+.line_chart path.area { fill-opacity: 0.2; }
+.line_chart text.label, text.label_0, text.label_1, text.label_2, text.label_likers { font-weight: bold; }
+
+/* styles for ColumnChart */
+.column_chart .series_0 { fill: #0092BC; }
+.column_chart .series_1 { fill: #51BDF1; }
+.column_chart .label { fill: #666; }
+.column_chart rect:hover { stroke: #666; stroke-width: 1px; }
+
+/* styles for BarChart */
+.bar_chart rect:hover { stroke: #666; stroke-width: 1px; }
+
+/* styles for BulletChart */
+.bullet { font: 10px sans-serif; }
+.bullet .marker { stroke: #000; stroke-width: 2px; }
+.bullet .tick line { stroke: #666; stroke-width: .5px; }
+.bullet .range.s0 { fill: #669933; }
+.bullet .range.s1 { fill: #EEEE33; } /* #FA8349 #EEEE33 */
+.bullet .range.s2 { fill: #CA3A46; } 
+.bullet .measure.s0 { fill: #CCC; }
+.bullet .measure.s1 { fill: #EEE; }
+.bullet .title { font-size: 14px; font-weight: bold; }
+.bullet .subtitle { fill: #999; }
+.bullet .marker { stroke: none; } /* hide the black line temporarily */
+.bullet text.tip { font-size: 14px; text-anchor: start; }
+
+/* styles for PieChart */
+.pie_chart path.slice { stroke: #FFF; stroke-width: 1px; }
+.pie_chart text.label { fill: #333; font-weight: normal; }
+
+/* styles for SparkBar */
+.spark_bar rect.succeeded { stroke: none; fill: #6EAB37; }
+.spark_bar rect.running { stroke: none; fill: #F3D03E; }
+.spark_bar rect.failed { stroke: none; fill: #D14124; }
+.spark_bar rect:hover { stroke: #666; stroke-width: 2px; }
+.spark_bar line.rule_first { stroke: #666; stroke-width: 2px; }
+
+/* styles for GanttChart */
+.gantt_chart rect.succeeded { stroke: none; fill: #6EAB37; }
+.gantt_chart rect.running { stroke:none; fill: #F3D03E; }
+.gantt_chart rect.failed { stroke: none; fill: #D14124; }
+.gantt_chart line.baseline { stroke: #aeaeae; stroke-width: 1px; }
+.gantt_chart text.title{ fill: #300; font-size: .85em; }
+.gantt_chart text.title a tspan { fill: #356596; }
+.gantt_chart text.title a:hover tspan { text-decoration: underline; }
+.gantt_chart line.highlight { stroke-width: 1px;}
+
+/* styles for ForceDirected */
+/* styles for force-directed graph */
+.force_directed text.name { fill: #666; font: 16px Helvetica Neue, Arial; text-anchor: middle; dy: 0.3em; }
+.force_directed text.value { fill: none; font: 16px Helvetica Neue, Arial; text-anchor: middle; dy: 0.3em; }
+
+
+/* styles for FilledSeries */
+.filled_series circle:hover{ stroke: #999; stroke-width: 2px; }
