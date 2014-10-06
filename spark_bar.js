@@ -1,13 +1,13 @@
 /* 
   var data = {
     series1: [
-      {time_id: "2012-02-01 00:05:00", y: 125.38, state: "succeeded"},
-      {time_id: "2012-02-01 01:05:00", y: 119.23, state: "succeeded"},
-      {time_id: "2012-02-01 02:05:00", y: 108.65, state: "failed"},
-      {time_id: "2012-02-01 03:05:00", y: 108.65, state: "failed"},
-      {time_id: "2012-02-01 04:05:00", y: 108.65, state: "failed"},
-      {time_id: "2012-02-01 05:05:00", y: 108.65, state: "failed"},
-      {time_id: "2012-02-01 06:05:00", y: 67.12, state: "running"} ]
+      {time_id: "2012-02-01 00:05", y: 125.38, state: "succeeded"},
+      {time_id: "2012-02-01 01:05", y: 119.23, state: "succeeded"},
+      {time_id: "2012-02-01 02:05", y: 108.65, state: "failed"},
+      {time_id: "2012-02-01 03:05", y: 108.65, state: "failed"},
+      {time_id: "2012-02-01 04:05", y: 108.65, state: "failed"},
+      {time_id: "2012-02-01 05:05", y: 108.65, state: "failed"},
+      {time_id: "2012-02-01 06:05", y: 67.12, state: "running"} ]
   };
 */
 

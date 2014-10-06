@@ -7,11 +7,11 @@
     <link type="text/css" rel="stylesheet" href="stylesheets/tipsy.css">
     
     <!-- jquery -->
-    <script type="text/javascript" src="../lib/jquery/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="../lib/jquery/jquery.tipsy.js"></script>
+    <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="../bower_components/tipsy/src/javascripts/jquery.tipsy.js"></script>
     
-    <!-- include your local d3 library instead -->
-    <script type="text/javascript" src="../lib/d3.v2.min.js"></script>
+    <!-- d3 -->
+    <script type="text/javascript" src="../bower_components/d3/d3.min.js"></script>
     
     <!-- visualizie base classes -->
     <script type="text/javascript" src="../class.js"></script>
@@ -23,13 +23,13 @@
     <script type="text/javascript">
       var data = {
         series: [
-          {time_id: "2012-02-01 00:05:00", y: 125.38, state: "succeeded"},
-          {time_id: "2012-02-01 01:05:00", y: 119.23, state: "succeeded"},
-          {time_id: "2012-02-01 02:05:00", y: 108.65, state: "failed"},
-          {time_id: "2012-02-01 03:05:00", y: 108.65, state: "failed"},
-          {time_id: "2012-02-01 04:05:00", y: 108.65, state: "failed"},
-          {time_id: "2012-02-01 05:05:00", y: 108.65, state: "failed"},
-          {time_id: "2012-02-01 06:05:00", y: 0, state: "running"} ]
+          {label: "00:05", y: 125.38, state: "succeeded"},
+          {label: "01:05", y: 119.23, state: "succeeded"},
+          {label: "02:05", y: 108.65, state: "failed"},
+          {label: "03:05", y: 108.65, state: "failed"},
+          {label: "04:05", y: 108.65, state: "failed"},
+          {label: "05:05", y: 108.65, state: "failed"},
+          {label: "06:05", y: 0, state: "running"} ]
       };
       
       var chart = new SparkBar("#chart-div", data, {
