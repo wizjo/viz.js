@@ -21,6 +21,7 @@ var data = {
   ]
 };
 */
+
 var FilledSeries = Chart.extend({
   init: function(selector, data, options) {
     this._super(selector, options);
