@@ -12,7 +12,7 @@
   ],
   "license": "MIT",
   "private": true,
-  "main": ""
+  "main": "",
   "ignore": [
     "**/.*",
     "node_modules",
