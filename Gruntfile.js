@@ -2,6 +2,15 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    mocha: {
+      test: {
+        src: ['spec/*.html'],
+        dest: 'log/test.log',
+        options: {
+          reporter: 'Nyan',
+        }
+      },
+    },  
     concat: {
       options: {
         separator: ';'
@@ -25,7 +34,7 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-mocha');
 
   grunt.registerTask('default', ['concat', 'uglify']);
-
 };
